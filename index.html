@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Four Horsemen - Battle Buddy</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+
+    <!-- Fonts -->
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+
+    <!-- Custom Theme CSS -->
+    <link href="css/grayscale.css" rel="stylesheet">
+
+</head>
+
+<body id="page-top" data-spy="scroll" data-target=".navbar-custom">
+
+    <nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header page-scroll">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-main-collapse">
+                    <i class="fa fa-bars"></i>
+                </button>
+                <a class="navbar-brand" href="#page-top">
+                    <i class="fa fa-play-circle"></i>  <span class="light">Four</span> Horsemen
+                </a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse navbar-right navbar-main-collapse">
+                <ul class="nav navbar-nav">
+                    <!-- Hidden li included to remove active class from about link when scrolled up past about section -->
+                    <li class="hidden">
+                        <a href="#page-top"></a>
+                    </li>
+                    <li class="page-scroll">
+                        <a href="#defense">Defense</a>
+                    </li>
+                    <li class="page-scroll">
+                        <a href="#tools">Tools</a>
+                    </li>
+                    <li class="page-scroll">
+                        <a href="#tips">Tips</a>
+                    </li>
+					<li class="page-scroll">
+                        <a href="#contact">Contact</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <section class="intro">
+        <div class="intro-body">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8 col-md-offset-2">
+                        <h1 class="brand-heading">four horsemen</h1>
+                        <p class="intro-text">A collection of tools we find useful for kicking ass as efficiently as we can.</p>
+                        <div class="page-scroll">
+                            <a href="#defense" class="btn btn-circle">
+                                <i class="fa fa-angle-double-down animated"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="defense" class="container content-section text-center">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2">
+                <h2>defense Calculator</h2>
+                <p>The defense Calculator asks you quesitons about the castle being attacked, and the incoming army. It's faily straightforward. Enter in the information about your catle, and the corresponding information from the attack warning</p>
+				<p>Enter the tools you've got to defend yourself, and press the "Calculate" button. If you get everything right, the answer will be correct. Credits to Phil for the logic and scripts.</p>
+				<form>
+            <p>
+                <input type="BUTTON" onclick="Combat_calc(this.form);" value="Calculate" class="btn btn-default btn-lg"></p>
+            <p id="answer"></p>
+
+            <h3>Your Castle:</h3>
+            <p>
+                Wall:
+                <input type="radio" name="Wall" id="W1" value="1" checked>
+                <label for="W1">Wood </label>
+                <input type="radio" name="Wall" id="W2" value="2">
+                <label for="W2">Tudor </label>
+                <input type="radio" name="Wall" id="W3" value="3">
+                <label for="W3">Stone </label>
+                <input type="radio" name="Wall" id="W4" value="4">
+                <label for="W4">Red Top </label>
+                <input type="radio" name="Wall" id="W5" value="5">
+                <label for="W5">White Top </label>
+            </p>
+            <p>
+                Gate Level:
+                <input name="Gate" size="10" value="" placeholder="1, 2, 3, or 4">
+				
+                <div class="radios">
+                <input type="RADIO" name="Moat" id="M1" value="0" checked>
+                <label for="M1">No Moat   </label>
+                <input type="RADIO" name="Moat" id="M2" value="1">
+                <label for="M2">Dirt Moat   </label>
+                <input type="RADIO" name="Moat" id="M3" value="1">
+                <label for="M3">Stone Moat</label>
+				</div>
+            </p>
+            <p>
+                Number of Troops on the Walls:
+                <input name="Troops" size="4" value="0">
+            </p>
+            <p>
+                Types of Defenders:
+                <input type="RADIO" name="TroopType" id="T1" value="0" checked>
+                <label for="T1">Regular </label>
+                <input type="RADIO" name="TroopType" id="T2" value="1" >
+                <label for="T2">Veteran </label>
+                <input type="RADIO" name="TroopType" id="T3" value="2">
+                <label for="T3">Kingsguard </label>
+            </p>
+            <h3>Our Castellan: </h3>
+            <p>
+                Wall:
+                <input name="CasWall" size="4" value="0">
+                Gate:
+                <input name="CasGate" size="4" value="0">
+                Moat:
+                <input name="CasMoat" size="4" value="0">
+                Melee:
+                <input name="CasMelee" size="4" value="0">
+                Range:
+                <input name="CasRange" size="4" value="0">
+            </p>
+            <h3>Their Commander: </h3>
+            <p>
+                Wall:
+                <input name="ComWall" size="4" value="0">
+                Gate:
+                <input name="ComGate" size="4" value="0">
+                Moat:
+                <input name="ComMoat" size="4" value="0">
+                Melee:
+                <input name="ComMelee" size="4" value="0">
+                Range:
+                <input name="ComRange" size="4" value="0">
+            </p>
+            <h3>Now the tools: </h3>
+            <table border="0">
+                <tr>
+                    <td>Ladder</td>
+                    <td>
+                        <input name="LL" size="4" value="0"></td>
+                    <td>
+                        <input name="LC" size="4" value="0"></td>
+                    <td>
+                        <input name="LR" size="4" value="0"></td>
+                    <td>Rocks</td>
+                    <td>
+                        <input name="RL" size="4" value="0"></td>
+                    <td>
+                        <input name="RC" size="4" value="0"></td>
+                    <td>
+                        <input name="RR" size="4" value="0"></td>
+                </tr>
+                <tr>
+                    <td>Siege Tower</td>
+                    <td>
+                        <input name="STL" size="4" value="0"></td>
+                    <td>
+                        <input name="STC" size="4" value="0"></td>
+                    <td>
+                        <input name="STR" size="4" value="0"></td>
+                    <td>Tar Kettle</td>
+                    <td>
+                        <input name="TL" size="4" value="0"></td>
+                    <td>
+                        <input name="TC" size="4" value="0"></td>
+                    <td>
+                        <input name="TR" size="4" value="0"></td>
+                </tr>
+                <tr>
+                    <td>Belfry</td>
+                    <td>
+                        <input name="EL" size="4" value="0"></td>
+                    <td>
+                        <input name="EC" size="4" value="0"></td>
+                    <td>
+                        <input name="ER" size="4" value="0"></td>
+                    <td>Machicolation</td>
+                    <td>
+                        <input name="FMAL" size="4" value="0"></td>
+                    <td>
+                        <input name="FMAC" size="4" value="0"></td>
+                    <td>
+                        <input name="FMAR" size="4" value="0"></td>
+                </tr>
+                <tr>
+                    <td>Battering Ram</td>
+                    <td></td>
+                    <td>
+                        <input name="FBRC" size="4" value="0"></td>
+                    <td></td>
+                    <td>Gate Reinforcement</td>
+                    <td></td>
+                    <td>
+                        <input name="GRC" size="4" value="0"></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Iron Ram</td>
+                    <td></td>
+                    <td>
+                        <input name="IRC" size="4" value="0"></td>
+                    <td></td>
+                    <td>Insulating Mat</td>
+                    <td></td>
+                    <td>
+                        <input name="IMC" size="4" value="0"></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Heavy Ram</td>
+                    <td></td>
+                    <td>
+                        <input name="HRC" size="4" value="0"></td>
+                    <td></td>
+                    <td>Portcullis</td>
+                    <td></td>
+                    <td>
+                        <input name="PC" size="4" value="0"></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Mantlet</td>
+                    <td>
+                        <input name="NL" size="4" value="0"></td>
+                    <td>
+                        <input name="NC" size="4" value="0"></td>
+                    <td>
+                        <input name="NR" size="4" value="0"></td>
+                    <td>Fire Arrows</td>
+                    <td>
+                        <input name="FAL" size="4" value="0"></td>
+                    <td>
+                        <input name="FAC" size="4" value="0"></td>
+                    <td>
+                        <input name="FAR" size="4" value="0"></td>
+                </tr>
+                <tr>
+                    <td>Iron Mantlet</td>
+                    <td>
+                        <input name="CML" size="4" value="0"></td>
+                    <td>
+                        <input name="CMC" size="4" value="0"></td>
+                    <td>
+                        <input name="CMR" size="4" value="0"></td>
+                    <td>Bulwark</td>
+                    <td>
+                        <input name="WL" size="4" value="0"></td>
+                    <td>
+                        <input name="WC" size="4" value="0"></td>
+                    <td>
+                        <input name="WR" size="4" value="0"></td>
+                </tr>
+                <tr>
+                    <td>Shield Wall</td>
+                    <td>
+                        <input name="FSWL" size="4" value="0"></td>
+                    <td>
+                        <input name="FSWC" size="4" value="0"></td>
+                    <td>
+                        <input name="FSWR" size="4" value="0"></td>
+                    <td>Arrow Slit</td>
+                    <td>
+                        <input name="ASL" size="4" value="0"></td>
+                    <td>
+                        <input name="ASC" size="4" value="0"></td>
+                    <td>
+                        <input name="ASR" size="4" value="0"></td>
+                </tr>
+                <tr>
+                    <td>Wood Bundle</td>
+                    <td>
+                        <input name="WBL" size="4" value="0"></td>
+                    <td>
+                        <input name="WBC" size="4" value="0"></td>
+                    <td>
+                        <input name="WBR" size="4" value="0"></td>
+                    <td>Sharp Stake</td>
+                    <td>
+                        <input name="SSL" size="4" value="0"></td>
+                    <td>
+                        <input name="SSC" size="4" value="0"></td>
+                    <td>
+                        <input name="SSR" size="4" value="0"></td>
+                </tr>
+                <tr>
+                    <td>Assault Bridge</td>
+                    <td>
+                        <input name="ABL" size="4" value="0"></td>
+                    <td>
+                        <input name="ABC" size="4" value="0"></td>
+                    <td>
+                        <input name="ABR" size="4" value="0"></td>
+                    <td>Gator</td>
+                    <td>
+                        <input name="GSL" size="4" value="0"></td>
+                    <td>
+                        <input name="GSC" size="4" value="0"></td>
+                    <td>
+                        <input name="GSR" size="4" value="0"></td>
+                </tr>
+                <tr>
+                    <td>Boulder</td>
+                    <td>
+                        <input name="BLL" size="4" value="0"></td>
+                    <td>
+                        <input name="BLC" size="4" value="0"></td>
+                    <td>
+                        <input name="BLR" size="4" value="0"></td>
+                    <td>Fire Moat</td>
+                    <td>
+                        <input name="FML" size="4" value="0"></td>
+                    <td>
+                        <input name="FMC" size="4" value="0"></td>
+                    <td>
+                        <input name="FMR" size="4" value="0"></td>
+                </tr>
+            </table>
+            <h3>And the troops attacking, left, center, and right: </h3>
+            <p>
+                &nbsp; S 
+                <input name="SL" size="4" value="0">
+                <input name="SC" size="4" value="0">
+                <input name="SR" size="4" value="0">
+                Spearman
+            </p>
+            <p>
+                &nbsp; B 
+                <input name="BL" size="4" value="0">
+                <input name="BC" size="4" value="0">
+                <input name="BR" size="4" value="0">
+                Bowman
+            </p>
+            <p>
+                &nbsp; M 
+                <input name="ML" size="4" value="0">
+                <input name="MC" size="4" value="0">
+                <input name="MR" size="4" value="0">
+                Maceman
+            </p>
+            <p>
+                &nbsp; C 
+                <input name="CL" size="4" value="0">
+                <input name="CC" size="4" value="0">
+                <input name="CR" size="4" value="0">
+                Crossbowman
+            </p>
+            <p>
+                &nbsp; G 
+                <input name="GL" size="4" value="0">
+                <input name="GC" size="4" value="0">
+                <input name="GR" size="4" value="0">
+                Swordsman
+            </p>
+            <p>
+                &nbsp; A 
+                <input name="AL" size="4" value="0">
+                <input name="AC" size="4" value="0">
+                <input name="AR" size="4" value="0">
+                Archer
+            </p>
+            <p>
+                &nbsp; H 
+                <input name="HL" size="4" value="0">
+                <input name="HC" size="4" value="0">
+                <input name="HR" size="4" value="0">
+                Halberdier
+            </p>
+            <p>
+                &nbsp; O 
+                <input name="OL" size="4" value="0">
+                <input name="OC" size="4" value="0">
+                <input name="OR" size="4" value="0">
+                Longbowman
+            </p>
+            <p>
+                &nbsp; Z 
+                <input name="ZL" size="4" value="0">
+                <input name="ZC" size="4" value="0">
+                <input name="ZR" size="4" value="0">
+                Twohanded Swordman
+            </p>
+            <p>
+                &nbsp; X 
+                <input name="XL" size="4" value="0">
+                <input name="XC" size="4" value="0">
+                <input name="XR" size="4" value="0">
+                Heavy Crossbowman
+            </p>
+            <p>
+                VS 
+                <input name="VSL" size="4" value="0">
+                <input name="VSC" size="4" value="0">
+                <input name="VSR" size="4" value="0">
+                Veteran Spearman
+            </p>
+            <p>
+                VB 
+                <input name="VBL" size="4" value="0">
+                <input name="VBC" size="4" value="0">
+                <input name="VBR" size="4" value="0">
+                Veteran Bowman
+            </p>
+            <p>
+                VM 
+                <input name="VML" size="4" value="0">
+                <input name="VMC" size="4" value="0">
+                <input name="VMR" size="4" value="0">
+                Veteran Maceman
+            </p>
+            <p>
+                VC 
+                <input name="VCL" size="4" value="0">
+                <input name="VCC" size="4" value="0">
+                <input name="VCR" size="4" value="0">
+                Veteran Crossbowman
+            </p>
+            <p>
+                VG
+                <input name="VGL" size="4" value="0">
+                <input name="VGC" size="4" value="0">
+                <input name="VGR" size="4" value="0">
+                Veteran Swordman
+            </p>
+            <p>
+                SM
+                <input name="SML" size="4" value="0">
+                <input name="SMC" size="4" value="0">
+                <input name="SMR" size="4" value="0">
+                Shadow Maceman
+            </p>
+            <p>
+                SC
+                <input name="SCL" size="4" value="0">
+                <input name="SCC" size="4" value="0">
+                <input name="SCR" size="4" value="0">
+                Shadow Crossbowman
+            </p>
+            <p>
+                SR
+                <input name="SRL" size="4" value="0">
+                <input name="SRC" size="4" value="0">
+                <input name="SRR" size="4" value="0">
+                Shadow Rogue
+            </p>
+            <p>
+                SF
+                <input name="SFL" size="4" value="0">
+                <input name="SFC" size="4" value="0">
+                <input name="SFR" size="4" value="0">
+                Shadow Felon
+            </p>
+            <p>
+                MA
+                <input name="MAL" size="4" value="0">
+                <input name="MAC" size="4" value="0">
+                <input name="MAR" size="4" value="0">
+                Marauder
+            </p>
+            <p>
+                PY
+                <input name="PYL" size="4" value="0">
+                <input name="PYC" size="4" value="0">
+                <input name="PYR" size="4" value="0">
+                Pyromaniac
+            </p>
+            <p>
+                TZ
+                <input name="TZL" size="4" value="0">
+                <input name="TZC" size="4" value="0">
+                <input name="TZR" size="4" value="0">
+                Travelling Knight
+            </p>
+            <p>
+                TX
+                <input name="TXL" size="4" value="0">
+                <input name="TXC" size="4" value="0">
+                <input name="TXR" size="4" value="0">
+                Travelling Crossbowman
+            </p>
+            <p>
+                KZ
+                <input name="KZL" size="4" value="0">
+                <input name="KZC" size="4" value="0">
+                <input name="KZR" size="4" value="0">
+                Knight of Kingsguard
+            </p>
+            <p>
+                KX
+                <input name="KXL" size="4" value="0">
+                <input name="KXC" size="4" value="0">
+                <input name="KXR" size="4" value="0">
+                Bowman of Kingsguard
+            </p>
+            <p>
+                KH
+                <input name="KHL" size="4" value="0">
+                <input name="KHC" size="4" value="0">
+                <input name="KHR" size="4" value="0">
+                Sentinel of Kingsguard
+            </p>
+            <p>
+                KO
+                <input name="KOL" size="4" value="0">
+                <input name="KOC" size="4" value="0">
+                <input name="KOR" size="4" value="0">
+                Scout of Kingsguard
+            </p>
+            <p>
+                NA
+                <input name="NAL" size="4" value="0">
+                <input name="NAC" size="4" value="0">
+                <input name="NAR" size="4" value="0">
+                Norseman with ax
+            </p>
+            <p>
+                NB
+                <input name="NBL" size="4" value="0">
+                <input name="NBC" size="4" value="0">
+                <input name="NBR" size="4" value="0">
+                Norseman with bow
+            </p>
+            <p>
+                WH
+                <input name="WHL" size="4" value="0">
+                <input name="WHC" size="4" value="0">
+                <input name="WHR" size="4" value="0">
+                Wolfhound
+            </p>
+            <p>
+                BR
+                <input name="BRL" size="4" value="0">
+                <input name="BRC" size="4" value="0">
+                <input name="BRR" size="4" value="0">
+                Barbarian
+            </p>
+            <p>
+                SW
+                <input name="SWL" size="4" value="0">
+                <input name="SWC" size="4" value="0">
+                <input name="SWR" size="4" value="0">
+                Saber Warrior
+            </p>
+            <p>
+                DB
+                <input name="DBL" size="4" value="0">
+                <input name="DBC" size="4" value="0">
+                <input name="DBR" size="4" value="0">
+                Desert Bowman
+            </p>
+            <p>
+                CA
+                <input name="CAL" size="4" value="0">
+                <input name="CAC" size="4" value="0">
+                <input name="CAR" size="4" value="0">
+                Composite Bowman
+            </p>
+            <p>
+                FB
+                <input name="FBL" size="4" value="0">
+                <input name="FBC" size="4" value="0">
+                <input name="FBR" size="4" value="0">
+                Flame Bearer
+            </p>
+            <p>
+                CW
+                <input name="CWL" size="4" value="0">
+                <input name="CWC" size="4" value="0">
+                <input name="CWR" size="4" value="0">
+                Cultist Warrior
+            </p>
+            <p>
+                CB
+                <input name="CBL" size="4" value="0">
+                <input name="CBC" size="4" value="0">
+                <input name="CBR" size="4" value="0">
+                Cultist Bowman
+            </p>
+            <p>
+                DZ
+                <input name="DZL" size="4" value="0">
+                <input name="DZC" size="4" value="0">
+                <input name="DZR" size="4" value="0">
+                Demon Horror
+            </p>
+            <p>
+                DX
+                <input name="DXL" size="4" value="0">
+                <input name="DXC" size="4" value="0">
+                <input name="DXR" size="4" value="0">
+                Deathly Horror
+            </p>
+            <p>
+                LB
+                <input name="LBL" size="4" value="0">
+                <input name="LBC" size="4" value="0">
+                <input name="LBR" size="4" value="0">
+                Lion Bowman
+            </p>
+            <p>
+                LW
+                <input name="LWL" size="4" value="0">
+                <input name="LWC" size="4" value="0">
+                <input name="LWR" size="4" value="0">
+                Lion Warrior
+            </p>
+            <p>
+                BB
+                <input name="BBL" size="4" value="0">
+                <input name="BBC" size="4" value="0">
+                <input name="BBR" size="4" value="0">
+                Bear Bowman
+            </p>
+            <p>
+                BW
+                <input name="BWL" size="4" value="0">
+                <input name="BWC" size="4" value="0">
+                <input name="BWR" size="4" value="0">
+                Bear Warrior
+            </p>
+            <p>
+                <input type="BUTTON" onclick="Combat_calc(this.form);" value="Calculate" class="btn btn-default btn-lg">
+            </p>
+            <p id="answer2"></p>
+        </form>
+            </div>
+        </div>
+    </section>
+
+    <section id="tools" class="content-section text-center">
+        <div class="download-section">
+            <div class="container">
+                <div class="col-lg-8 col-lg-offset-2">
+                    <h2>Tool Calculator</h2>
+                    <p>
+					<form>Tower Counts:
+            <p>Level 0:
+                <input name="Tower0" size="4" value="0">Level 1:
+                <input name="Tower1" size="4" value="0">
+                Level 2:
+                <input name="Tower2" size="4" value="0"></p>
+            <p>Level 3:
+                <input name="Tower3" size="4" value="0">
+                Level 4:
+                <input name="Tower4" size="4" value="0">
+                Level 5:
+                <input name="Tower5" size="4" value="0"></p>
+            <p>Wall:
+                <input type="RADIO" name="Walle" id="WE1" value="1"><label for="WE1"> Wood </label>
+                <input type="RADIO" name="Walle" id="WE2" value="2">
+                <label for="WE2">Tudor </label>
+                <input type="RADIO" name="Walle" id="WE3" value="3">
+                <label for="WE3">Stone </label>
+                <input type="RADIO" name="Walle" id="WE4" value="4">
+                <label for="WE4">Red Top </label>
+                <input type="RADIO" name="Walle" id="WE5" value="5"><label for="WE5"> White Top </label>
+            </p>
+            <p>Gate Level:
+                <input name="Gatee" size="4" value="0"></p>
+            <p>Moat:
+                <input type="RADIO" name="Moate" id="ME1" value="0"><label for="ME1"> None </label>
+                <input type="RADIO" name="Moate" id="ME2" value="1"><label for="ME2"> Dirt </label>
+                <input type="RADIO" name="Moate" id="ME3" value="2"><label for="ME3"> Stone </label>
+            </p>
+            <p>
+                <input type="BUTTON" onclick="Espi_calc(this.form);" value="calculate" class="btn btn-default btn-lg"></p>
+            <p id="toolsanswer"></p>
+        </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="tips" class="container content-section text-center">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2">
+                <h2>Gold Farming</h2>
+                    <p>Explain gold farming technique.</p>
+                    Download <a href="http://www.bluestacks.com/">BlueStacks</a> and <a href="http://sourceforge.net/projects/mousecontroller/files/latest/download">MouseController</a>
+            </div>
+        </div>
+    </section>
+	
+	<section id="contact" class="content-section text-center">
+        <div class="download-section">
+            <div class="container">
+                <div class="col-lg-8 col-lg-offset-2">
+				<h2>Contact Four Horsemen</h2>
+                <p>Feel free to email us to provide some feedback on the tools, give us suggestions for new ones to host or build, join the alliance, or to just say hello!</p>
+                <p>feedback@somedomain.com</p>
+                <ul class="list-inline banner-social-buttons">
+                    <li><a href="https://twitter.com/NotAPoliceman" class="btn btn-default btn-lg"><i class="fa fa-twitter fa-fw"></i> <span class="network-name">Twitter</span></a>
+                    </li>
+                    <li><a href="https://github.com/aallen90" class="btn btn-default btn-lg"><i class="fa fa-github fa-fw"></i> <span class="network-name">Github</span></a>
+                    </li>
+                    <li><a href="https://plus.google.com/u/0/105500523616378793964/posts" class="btn btn-default btn-lg"><i class="fa fa-google-plus fa-fw"></i> <span class="network-name">Google+</span></a>
+                    </li>
+                </ul>
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div id="map"></div>
+
+    <!-- Core JavaScript Files -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+
+    <!-- Google Maps API Key - You will need to use your own API key to use the map feature -->
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCRngKslUGJTlibkQ3FkfTxj3Xss1UlZDA&sensor=false"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="js/grayscale.js"></script>
+	<script src="js/defense.js"></script>
+
+</body>
+
+</html>
