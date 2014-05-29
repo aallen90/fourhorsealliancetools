@@ -1,2 +1,2 @@
-fourhorsealliancetools
+Goodgame Empire Battle Calculator
 ======================
