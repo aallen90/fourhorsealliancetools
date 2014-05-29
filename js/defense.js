@@ -1,562 +1,681 @@
 /* Phil's Highly Unused Combat Evaluating Monster! v0.3 20130912 
-This was my second and last attempt at javascript. The first is the attack calculator.
+This was my second and last attempt at JavaScript. The first is the attack calculator.
 Never could get arrays to work for me, sorry for the variable names. Did not waste
 very much time on the UI either, obviously. Plenty of room for improvement.
-But it cruches the numbers just fine; worked for me in every in-game test.
+But it crunches the numbers just fine; worked for me in every in-game test.
+
+Austin's modified version for mobile
 */
+// Defense Calculator
+// ReSharper disable once InconsistentNaming
+
 
 function Combat_calc(Form) {
-    debug = false;
-    m0 = 0;
-    m1 = 0;
-    m2 = 0;
-    r0 = 0;
-    r1 = 0;
-    r2 = 0;
-    answer = "working...<BR>";
-    ok = false;
-    for (i = 0; i < 5; i++) {
+    var debug = false;
+
+    // Initialize vars
+    var rawMeleeLeft = 0;
+    var rawMeleeCenter = 0;
+    var rawMeleeRight = 0;
+    var rawRangedLeft = 0;
+    var rawRangedCenter = 0;
+    var rawRangedRight = 0;
+
+    // Set HTML entity for a space, to a variable for easier typing.
+    var s = "&nbsp;";
+
+    // Set answer string
+    var answer = "working...<br/>";
+    var ok = false;
+
+    /* Loop through the available Wall radio buttons, and try to assign the associated level value (1,2,3,4).
+        If one is selected, continue. Otherwise, the cast will fail.
+        */
+    var wallCoefficient;
+    for (var i = 0; i < 4; i++) {
         if (Form.Wall[i].checked) {
-            t = Number(Form.Wall[i].value);
-            ok = true
+            wallCoefficient = Number(Form.Wall[i].value); // Assigns the wall value coefficient
+            ok = true;
         }
     }
     if (ok) {
-        t = t * 20;
-        m0 += t;
-        m1 += t;
-        m2 += t;
-        r0 += t;
-        r1 += t;
-        r2 += t
+        wallCoefficient = wallCoefficient * 20; // 20 is the defense increase per wall level. Multiply to get total wall boost
+        rawMeleeLeft += wallCoefficient; // Set each raw M/R value to the base wall defense.
+        rawMeleeCenter += wallCoefficient;
+        rawMeleeRight += wallCoefficient;
+        rawRangedLeft += wallCoefficient;
+        rawRangedCenter += wallCoefficient;
+        rawRangedRight += wallCoefficient;
     } else {
-        answer = answer + "Problem with castle wall.<BR>"
+        answer = answer + "Problem with castle wall.<br/>";
     }
 
-    t = Number(Form.Gate.value);
-    if (t > 0 && t < 6) {
-        t = t * 20;
-        m1 += t;
-        r1 += t
+    // grab the Gate level from the textfield
+    var gateCoefficient = Number(Form.Gate.value);
+    if (gateCoefficient > 0 && gateCoefficient <= 4) { // Set max Gate to 4 for mobile.
+        gateCoefficient = gateCoefficient * 20; // Get total gate bonus for the level.
+        rawMeleeCenter += gateCoefficient; // Add the Gate bonus to the raw M/R score (which is just Wall + Gate bonus so far).
+        rawRangedCenter += gateCoefficient; // Only applies to the center scores.
     } else {
-        answer = answer + "Problem with castle gate.<BR>"
+        answer = answer + "Problem with castle gate.<br/>";
     }
 
+    // Reset boolean flag
     ok = false;
+
+    // Loop through the available Moat radios (0,1,2) and set the level
+    var moatCoefficient;
     for (i = 0; i < 3; i++) {
         if (Form.Moat[i].checked) {
-            t = Number(Form.Moat[i].value);
-            ok = true
+            moatCoefficient = Number(Form.Moat[i].value);
+            ok = true;
         }
     }
     if (ok) {
-        t = t * 10;
-        m0 += t;
-        m1 += t;
-        m2 += t;
-        r0 += t;
-        r1 += t;
-        r2 += t
+        moatCoefficient = moatCoefficient * 10; // Multiply the Moat level with 10 to get to boost.
+        rawMeleeLeft += moatCoefficient; // Add the moat bonus to the both raw scores on all three sides.
+        rawMeleeCenter += moatCoefficient;
+        rawMeleeRight += moatCoefficient;
+        rawRangedLeft += moatCoefficient;
+        rawRangedCenter += moatCoefficient;
+        rawRangedRight += moatCoefficient;
     } else {
-        answer = answer + "Problem with castle moat.<BR>"
+        answer = answer + "Problem with castle moat.<br/>";
     }
 
-    troops = Number(Form.Troops.value);
-    if (troops < 4 || troops > 320) {
-        answer = answer + "Problem with troop count.<BR>"
+    // Get user's wall troop count. This maxes out based on their tower level, but tower level is not necessary for this calc.
+    var troops = Number(Form.Troops.value);
+    if (troops < 4 || troops > 260) { // Make sure the user has entered a number between the minimum, and max(20 level 4 towers at 13 troops is 260)
+        answer = answer + "Problem with troop count.<br/>";
     }
 
+    // This is where we set the defense values to use based on the defender type that is chosen. Implied that user will choose the best defenders when able.
+    // TEFKAJ, I just added the base guys to help lower levelers
+    var meleeDefenseVal, meleeDefenderName, rangedDefenseVal, rangedDefenderName;
     if (Form.TroopType[0].checked) {
-        mdefval = 135;
-        mdefname = "Halberdiers";
-        rdefval = 125;
-        rdefname = "Longbowmen"
+        meleeDefenseVal = 26;
+        meleeDefenderName = "Spearmen";
+        rangedDefenseVal = 24;
+        rangedDefenderName = "Bowmen";
     }
     if (Form.TroopType[1].checked) {
-        mdefval = 142;
-        mdefname = "Veteran Spearmen";
-        rdefval = 132;
-        rdefname = "Veteran Bowmen"
+        meleeDefenseVal = 135;
+        meleeDefenderName = "Halberdiers";
+        rangedDefenseVal = 125;
+        rangedDefenderName = "Longbowmen";
     }
     if (Form.TroopType[2].checked) {
-        mdefval = 150;
-        mdefname = "Sentinels of Kingsguard";
-        rdefval = 139;
-        rdefname = "Scouts of Kingsguard"
+        meleeDefenseVal = 142;
+        meleeDefenderName = "Veteran Spearmen";
+        rangedDefenseVal = 132;
+        rangedDefenderName = "Veteran Bowmen";
     }
+    if (Form.TroopType[3].checked) {
+        meleeDefenseVal = 150;
+        meleeDefenderName = "Sentinels of Kingsguard";
+        rangedDefenseVal = 139;
+        rangedDefenderName = "Scouts of Kingsguard";
+    }
+    if (debug) { // If we're debugging, spit out the troops
+        answer = answer + "MDEFVAL: " + meleeDefenseVal + " " + meleeDefenderName + " RDEFVAL: " + rangedDefenseVal + " " + rangedDefenderName + "<br/>";
+    }
+
+    // Get all of the tools from the inputs
+    // Attack tools
+    var ladderLeft = Number(Form.LL.value);
+    var ladderCenter = Number(Form.LC.value);
+    var ladderRight = Number(Form.LR.value);
+    var siegeTowerLeft = Number(Form.STL.value);
+    var siegeTowerCenter = Number(Form.STC.value);
+    var siegeTowerRight = Number(Form.STR.value);
+    var belfryLeft = Number(Form.EL.value);
+    var belfryCenter = Number(Form.EC.value);
+    var belfryRight = Number(Form.ER.value);
+    var batteringRam = Number(Form.FBRC.value);
+    var ironRam = Number(Form.IRC.value);
+    var heavyRam = Number(Form.HRC.value);
+    var mantletLeft = Number(Form.NL.value);
+    var mantletCenter = Number(Form.NC.value);
+    var mantletRight = Number(Form.NR.value);
+    var ironMantletLeft = Number(Form.CML.value);
+    var ironMantletCenter = Number(Form.CMC.value);
+    var ironMantletRight = Number(Form.CMR.value);
+    var shieldWallLeft = Number(Form.FSWL.value);
+    var shieldWallCenter = Number(Form.FSWC.value);
+    var shieldWallRight = Number(Form.FSWR.value);
+    var woodBundleLeft = Number(Form.WBL.value);
+    var woodBundleCenter = Number(Form.WBC.value);
+    var woodBundleRight = Number(Form.WBR.value);
+    var assaultBridgeLeft = Number(Form.ABL.value);
+    var assaultBridgeCenter = Number(Form.ABC.value);
+    var assaultBridgeRight = Number(Form.ABR.value);
+    var boulderLeft = Number(Form.BLL.value);
+    var boulderCenter = Number(Form.BLC.value);
+    var boulderRight = Number(Form.BLR.value);
+
+    //Defense tools
+    var rocksLeft = Number(Form.RL.value);
+    var rocksCenter = Number(Form.RC.value);
+    var rocksRight = Number(Form.RR.value);
+    var tarKettleLeft = Number(Form.TL.value);
+    var tarKettleCenter = Number(Form.TC.value);
+    var tarKettleRight = Number(Form.TR.value);
+    var machicolationLeft = Number(Form.FMAL.value);
+    var machicolationCenter = Number(Form.FMAC.value);
+    var machicolationright = Number(Form.FMAR.value);
+    var gateReinforcement = Number(Form.GRC.value);
+    var insulatingMat = Number(Form.IMC.value);
+    var portcullis = Number(Form.PC.value);
+    var fireArrowsLeft = Number(Form.FAL.value);
+    var fireArrowsCenter = Number(Form.FAC.value);
+    var fireArrowsRight = Number(Form.FAR.value);
+    var bulwarkLeft = Number(Form.WL.value);
+    var bulwarkCenter = Number(Form.WC.value);
+    var bulwarkRight = Number(Form.WR.value);
+    var arrowSlitLeft = Number(Form.ASL.value);
+    var arrowSlitCenter = Number(Form.ASC.value);
+    var arrowSlitRight = Number(Form.ASR.value);
+    var sharpStakeLeft = Number(Form.SSL.value);
+    var sharpStakeCenter = Number(Form.SSC.value);
+    var sharpStakeRight = Number(Form.SSR.value);
+    var gatorLeft = Number(Form.GSL.value);
+    var gatorCenter = Number(Form.GSC.value);
+    var gatorRight = Number(Form.GSR.value);
+    var fireMoatLeft = Number(Form.FML.value);
+    var fireMoatCenter = Number(Form.FMC.value);
+    var fireMoatRight = Number(Form.FMR.value);
+
+    // Check defensive wall numbers
+    if (rocksLeft < 0 || rocksCenter < 0 || rocksRight < 0 || tarKettleLeft < 0 || tarKettleCenter < 0 || tarKettleRight < 0 || machicolationLeft < 0 || machicolationCenter < 0 || machicolationright < 0) {
+        answer = answer + "Problem with defensive wall tool numbers<br/>";
+    }
+    if (rocksLeft + rocksCenter + rocksRight + tarKettleLeft + tarKettleCenter + tarKettleRight + machicolationLeft + machicolationCenter + machicolationright > 36) {
+        answer = answer + "Problem with defensive wall tool numbers<br/>";
+    }
+    // Check gate tool numbers
+    if (gateReinforcement < 0 || insulatingMat < 0 || portcullis < 0) {
+        answer = answer + "Problem with defensive gate tool numbers<br/>";
+    }
+    if (gateReinforcement + insulatingMat + portcullis > 8) {
+        answer = answer + "Problem with defensive gate tool numbers<br/>";
+    }
+    // Check ranged defensive tool numbers
+    if (fireArrowsLeft < 0 || fireArrowsCenter < 0 || fireArrowsRight < 0 || bulwarkLeft < 0 || bulwarkCenter < 0 || bulwarkRight < 0 || arrowSlitLeft < 0 || arrowSlitCenter < 0 || arrowSlitRight < 0) {
+        answer = answer + "Problem with defensive range tool numbers<br/>";
+    }
+    if (fireArrowsLeft + fireArrowsCenter + fireArrowsRight + bulwarkLeft + bulwarkCenter + bulwarkRight + arrowSlitLeft + arrowSlitCenter + arrowSlitRight > 12) {
+        answer = answer + "Problem with defensive range tool numbers<br/>";
+    }
+    // Check defensive moat tool numbers
+    if (sharpStakeLeft < 0 || sharpStakeCenter < 0 || sharpStakeRight < 0 || gatorLeft < 0 || gatorCenter < 0 || gatorRight < 0 || fireMoatLeft < 0 || fireMoatCenter < 0 || fireMoatRight < 0) {
+        answer = answer + "Problem with defensive moat tool numbers<br/>";
+    }
+    if (sharpStakeLeft + sharpStakeCenter + sharpStakeRight + gatorLeft + gatorCenter + gatorRight + fireMoatLeft + fireMoatCenter + fireMoatRight > 12) {
+        answer = answer + "Problem with defensive moat tool numbers<br/>";
+    }
+
+    // Spit out the the tool data ONLY if we're checking for bugs!
     if (debug) {
-        answer = answer + "MDEFVAL: " + mdefval + " " + mdefname + " RDEFVAL: " + rdefval + " " + rdefname + "<BR>"
+
+        answer = answer + "Raw tool data:<br/>";
+        answer = answer + ladderLeft + s + ladderCenter + s + ladderRight + s + s + rocksLeft + s + rocksCenter + s + rocksRight + "<br/>";
+        answer = answer + siegeTowerLeft + s + siegeTowerCenter + s + siegeTowerRight + s + s + tarKettleLeft + s + tarKettleCenter + s + tarKettleRight + "<br/>";
+        answer = answer + belfryLeft + s + belfryCenter + s + belfryRight + s + s + machicolationLeft + s + machicolationCenter + s + machicolationright + "<br/>";
+        answer = answer + batteringRam + s + gateReinforcement + "<br/>";
+        answer = answer + ironRam + s + insulatingMat + "<br/>";
+        answer = answer + heavyRam + s + portcullis + "<br/>";
+        answer = answer + mantletLeft + s + mantletCenter + s + mantletRight + s + s + fireArrowsLeft + s + fireArrowsCenter + s + fireArrowsRight + "<br/>";
+        answer = answer + ironMantletLeft + s + ironMantletCenter + s + ironMantletRight + s + s + bulwarkLeft + s + bulwarkCenter + s + bulwarkRight + "<br/>";
+        answer = answer + shieldWallLeft + s + shieldWallCenter + s + shieldWallRight + s + s + arrowSlitLeft + s + arrowSlitCenter + s + arrowSlitRight + "<br/>";
+        answer = answer + woodBundleLeft + s + woodBundleCenter + s + woodBundleRight + s + s + sharpStakeLeft + s + sharpStakeCenter + s + sharpStakeRight + "<br/>";
+        answer = answer + assaultBridgeLeft + s + assaultBridgeCenter + s + assaultBridgeRight + s + s + gatorLeft + s + gatorCenter + s + gatorRight + "<br/>";
+        answer = answer + boulderLeft + s + boulderCenter + s + boulderRight + s + s + fireMoatLeft + s + fireMoatCenter + s + fireMoatRight + "<br/>";
     }
 
-    ll = Number(Form.LL.value);
-    lc = Number(Form.LC.value);
-    lr = Number(Form.LR.value);
-    stl = Number(Form.STL.value);
-    stc = Number(Form.STC.value);
-    str = Number(Form.STR.value);
-    el = Number(Form.EL.value);
-    ec = Number(Form.EC.value);
-    er = Number(Form.ER.value);
-    brc = Number(Form.FBRC.value);
-    irc = Number(Form.IRC.value);
-    hrc = Number(Form.HRC.value);
-    nl = Number(Form.NL.value);
-    nc = Number(Form.NC.value);
-    nr = Number(Form.NR.value);
-    cml = Number(Form.CML.value);
-    cmc = Number(Form.CMC.value);
-    cmr = Number(Form.CMR.value);
-    swl = Number(Form.FSWL.value);
-    swc = Number(Form.FSWC.value);
-    swr = Number(Form.FSWR.value);
-    wbl = Number(Form.WBL.value);
-    wbc = Number(Form.WBC.value);
-    wbr = Number(Form.WBR.value);
-    abl = Number(Form.ABL.value);
-    abc = Number(Form.ABC.value);
-    abr = Number(Form.ABR.value);
-    bll = Number(Form.BLL.value);
-    blc = Number(Form.BLC.value);
-    blr = Number(Form.BLR.value);
-    rl = Number(Form.RL.value);
-    rc = Number(Form.RC.value);
-    rr = Number(Form.RR.value);
-    tl = Number(Form.TL.value);
-    tc = Number(Form.TC.value);
-    tr = Number(Form.TR.value);
-    mal = Number(Form.FMAL.value);
-    mac = Number(Form.FMAC.value);
-    mar = Number(Form.FMAR.value);
-    grc = Number(Form.GRC.value);
-    imc = Number(Form.IMC.value);
-    pc = Number(Form.PC.value);
-    fal = Number(Form.FAL.value);
-    fac = Number(Form.FAC.value);
-    far = Number(Form.FAR.value);
-    wl = Number(Form.WL.value);
-    wc = Number(Form.WC.value);
-    wr = Number(Form.WR.value);
-    asl = Number(Form.ASL.value);
-    asc = Number(Form.ASC.value);
-    asr = Number(Form.ASR.value);
-    ssl = Number(Form.SSL.value);
-    ssc = Number(Form.SSC.value);
-    ssr = Number(Form.SSR.value);
-    gsl = Number(Form.GSL.value);
-    gsc = Number(Form.GSC.value);
-    gsr = Number(Form.GSR.value);
-    fml = Number(Form.FML.value);
-    fmc = Number(Form.FMC.value);
-    fmr = Number(Form.FMR.value);
+    // Add up the total attack tool deductions by multiplying the tool amount by their deduction bonus.
+    var attackToolWallLeft = 10 * ladderLeft + 15 * siegeTowerLeft + 20 * belfryLeft;
+    var attackToolWallFront = 10 * ladderCenter + 15 * siegeTowerCenter + 20 * belfryCenter;
+    var attackToolWallRight = 10 * ladderRight + 15 * siegeTowerRight + 20 * belfryRight;
+    var attackToolGate = 10 * batteringRam + 15 * ironRam + 20 * heavyRam;
+    var attackToolRangedLeft = 5 * mantletLeft + 10 * ironMantletLeft + 15 * shieldWallLeft;
+    var attackToolRangedCenter = 5 * mantletCenter + 10 * ironMantletCenter + 15 * shieldWallCenter;
+    var attackToolRangedRight = 5 * mantletRight + 10 * ironMantletRight + 15 * shieldWallRight;
+    var attackToolMoatLeft = 5 * woodBundleLeft + 10 * assaultBridgeLeft + 15 * boulderLeft;
+    var attackToolMoatCenter = 5 * woodBundleCenter + 10 * assaultBridgeCenter + 15 * boulderCenter;
+    var attackToolMoatRight = 5 * woodBundleRight + 10 * assaultBridgeRight + 15 * boulderRight;
 
-    if (rl < 0 || rc < 0 || rr < 0 || tl < 0 || tc < 0 || tr < 0 || mal < 0 || mac < 0 || mar < 0) {
-        answer = answer + "Problem with defensive wall tool numbers<BR>"
-    }
-    if (rl + rc + rr + tl + tc + tr + mal + mac + mar > 36) {
-        answer = answer + "Problem with defensive wall tool numbers<BR>"
-    }
-    if (grc < 0 || imc < 0 || pc < 0) {
-        answer = answer + "Problem with defensive gate tool numbers<BR>"
-    }
-    if (grc + imc + pc > 8) {
-        answer = answer + "Problem with defensive gate tool numbers<BR>"
-    }
-    if (fal < 0 || fac < 0 || far < 0 || wl < 0 || wc < 0 || wr < 0 || asl < 0 || asc < 0 || asr < 0) {
-        answer = answer + "Problem with defensive range tool numbers<BR>"
-    }
-    if (fal + fac + far + wl + wc + wr + asl + asc + asr > 12) {
-        answer = answer + "Problem with defensive range tool numbers<BR>"
-    }
-    if (ssl < 0 || ssc < 0 || ssr < 0 || gsl < 0 || gsc < 0 || gsr < 0 || fml < 0 || fmc < 0 || fmr < 0) {
-        answer = answer + "Problem with defensive moat tool numbers<BR>"
-    }
-    if (ssl + ssc + ssr + gsl + gsc + gsr + fml + fmc + fmr > 12) {
-        answer = answer + "Problem with defensive moat tool numbers<BR>"
+    // Add up the total defense tool bonus by multiplying the tool amount by their deduction bonus.
+    var defenseToolWallLeft = 25 * rocksLeft + 40 * tarKettleLeft + 50 * machicolationLeft;
+    var defenseToolWallCenter = 25 * rocksCenter + 40 * tarKettleCenter + 50 * machicolationCenter;
+    var defenseToolWallRight = 25 * rocksRight + 40 * tarKettleRight + 50 * machicolationright;
+    var defenseToolGate = 35 * gateReinforcement + 60 * insulatingMat + 75 * portcullis;
+    var defenseToolRangedLeft = 25 * fireArrowsLeft + 50 * bulwarkLeft + 70 * arrowSlitLeft;
+    var defenseToolRangedCenter = 25 * fireArrowsCenter + 50 * bulwarkCenter + 70 * arrowSlitCenter;
+    var defenseToolRangedRight = 25 * fireArrowsRight + 50 * bulwarkRight + 70 * arrowSlitRight;
+    var defenseToolMoatLeft = 35 * sharpStakeLeft + 80 * gatorLeft + 110 * fireMoatLeft;
+    var defenseToolMoatCenter = 35 * sharpStakeCenter + 80 * gatorCenter + 110 * fireMoatCenter;
+    var defenseToolMoatRight = 35 * sharpStakeRight + 80 * gatorRight + 110 * fireMoatRight;
+
+    // Spit out tool number calculations if debugging
+    if (debug) {
+        s = "&nbsp;"; // Set HTML entity for a space, to a variable for easier typing.
+        answer = answer + "Tool calculations:<br/>";
+        answer = answer + attackToolWallLeft + s + attackToolWallFront + s + attackToolWallRight + s + s + defenseToolWallLeft + s + defenseToolWallCenter + s + defenseToolWallRight + "<br/>";
+        answer = answer + attackToolGate + s + defenseToolGate + "<br/>";
+        answer = answer + attackToolRangedLeft + s + attackToolRangedCenter + s + attackToolRangedRight + s + s + defenseToolRangedLeft + s + defenseToolRangedCenter + s + defenseToolRangedRight + "<br/>";
+        answer = answer + attackToolMoatLeft + s + attackToolMoatCenter + s + attackToolMoatRight + s + s + defenseToolMoatLeft + s + defenseToolMoatCenter + s + defenseToolMoatRight + "<br/>";
     }
 
+    // Get the Castellan's equipment bonuses (that matter in defense)
+    var castWall = Number(Form.CasWall.value);
+    if (castWall < 0 || castWall > 100) {
+        answer = answer + "Problem with Castellan wall value<br/>";
+    }
+    var castGate = Number(Form.CasGate.value);
+    if (castGate < 0 || castGate > 100) {
+        answer = answer + "Problem with Castellan gate value<br/>";
+    }
+    var castMoat = Number(Form.CasMoat.value);
+    if (castMoat < 0 || castMoat > 100) {
+        answer = answer + "Problem with Castellan moat value<br/>";
+    }
+    var castMelee = Number(Form.CasMelee.value);
+    if (castMelee < 0 || castMelee > 100) {
+        answer = answer + "Problem with Castellan melee value<br/>";
+    }
+    var castRange = Number(Form.CasRange.value);
+    if (castRange < 0 || castRange > 100) {
+        answer = answer + "Problem with Castellan range value<br/>";
+    }
+
+    //Get the commander's equipment bonuses (that matter in attack)
+    var commanderWall = Number(Form.ComWall.value);
+    if (commanderWall < 0 || commanderWall > 100) {
+        answer = answer + "Problem with Commander wall value<br/>";
+    }
+    var commanderGate = Number(Form.ComGate.value);
+    if (commanderGate < 0 || commanderGate > 100) {
+        answer = answer + "Problem with Commander gate value<br/>";
+    }
+    var commanderMoat = Number(Form.ComMoat.value);
+    if (commanderMoat < 0 || commanderMoat > 100) {
+        answer = answer + "Problem with Commander moat value<br/>";
+    }
+    var commanderMelee = Number(Form.ComMelee.value);
+    if (commanderMelee < 0 || commanderMelee > 100) {
+        answer = answer + "Problem with Commander melee value<br/>";
+    }
+    var commanderRanged = Number(Form.ComRange.value);
+    if (commanderRanged < 0 || commanderRanged > 100) {
+        answer = answer + "Problem with Commander range value<br/>";
+    }
+
+    // Set the raw melee numbers by taking the original raw value (wall + gate + moat), adding in the defensive tool values,
+    // subtracting the attack tool deductions, and factoring in the affected castellan/commander wall/gate/moat bonuses.
+    // Since the number cannot be less than 0, set it back to the 0 if it goes under for each M/R Wall.
+    // Doesn't factor in equiment bonuses here, as they get factored into the result.
+    rawMeleeLeft = rawMeleeLeft + defenseToolWallLeft + defenseToolMoatLeft - attackToolWallLeft - attackToolMoatLeft + castWall + castMoat - commanderWall - commanderMoat;
+    if (rawMeleeLeft < 0) {
+        rawMeleeLeft = 0;
+    }
+    // Melee center factors in additional gate numbers
+    rawMeleeCenter = rawMeleeCenter + defenseToolWallCenter + defenseToolGate + defenseToolMoatCenter + castWall + castGate + castMoat - attackToolWallFront - attackToolGate - attackToolMoatCenter - commanderWall - commanderGate - commanderMoat;
+    if (rawMeleeCenter < 0) {
+        rawMeleeCenter = 0;
+    }
+    rawMeleeRight = rawMeleeRight + defenseToolWallRight + defenseToolMoatRight + castWall + castMoat - attackToolWallRight - attackToolMoatRight - commanderWall - commanderMoat;
+    if (rawMeleeRight < 0) {
+        rawMeleeRight = 0;
+    }
+
+    // Adds in Ranged values for these groups
+    // If the total ranged value at the walls is less than the total ranged attack tool deduction,
+    // then set the ranged value to the attack tool deduction value.
+    // TEFKAJ, can you verify that this? If I send 30 shield walls, and they have nothing, does my raw get set to -450?
+    // It would seem that we could stack this up ridiculously.
+    rawRangedLeft = rawRangedLeft + defenseToolWallLeft + defenseToolRangedLeft + defenseToolMoatLeft + castWall + castMoat - attackToolWallLeft - attackToolRangedLeft - attackToolMoatLeft - commanderWall - commanderMoat;
+    if (rawRangedLeft < -attackToolRangedLeft) {
+        rawRangedLeft = -attackToolRangedLeft;
+    }
+    //Adds in gate numbers for the center group
+    rawRangedCenter = rawRangedCenter + defenseToolWallCenter + defenseToolGate + defenseToolRangedCenter + defenseToolMoatCenter + castWall + castGate + castMoat - attackToolWallFront - attackToolGate - attackToolRangedCenter - attackToolMoatCenter - commanderWall - commanderGate - commanderMoat;
+    if (rawRangedCenter < -attackToolRangedCenter) {
+        rawRangedCenter = -attackToolRangedCenter;
+    }
+    rawRangedRight = rawRangedRight + defenseToolWallRight + defenseToolRangedRight + defenseToolMoatRight + castWall + castMoat - attackToolWallRight - attackToolRangedRight - attackToolMoatRight - commanderWall - commanderMoat;
+    if (rawRangedRight < -attackToolRangedRight) {
+        rawRangedRight = -attackToolRangedRight;
+    }
+
+    // Factors the Castellan and Commander bonuses into the raw scores after
+    // everything has been applied, so that the defender can have a minimum chance to defend.
+    rawMeleeLeft = rawMeleeLeft + castMelee - commanderMelee;
+    rawMeleeCenter = rawMeleeCenter + castMelee - commanderMelee;
+    rawMeleeRight = rawMeleeRight + castMelee - commanderMelee;
+    rawRangedLeft = rawRangedLeft + castRange - commanderRanged;
+    rawRangedCenter = rawRangedCenter + castRange - commanderRanged;
+    rawRangedRight = rawRangedRight + castRange - commanderRanged;
+
+    // Spit out the raw M/R values if we're debugging.
     if (debug) {
         s = "&nbsp;";
-        answer = answer + "Raw tool data:<BR>";
-        answer = answer + ll + s + lc + s + lr + s + s + rl + s + rc + s + rr + "<BR>";
-        answer = answer + stl + s + stc + s + str + s + s + tl + s + tc + s + tr + "<BR>";
-        answer = answer + el + s + ec + s + er + s + s + mal + s + mac + s + mar + "<BR>";
-        answer = answer + brc + s + grc + "<BR>";
-        answer = answer + irc + s + imc + "<BR>";
-        answer = answer + hrc + s + pc + "<BR>";
-        answer = answer + nl + s + nc + s + nr + s + s + fal + s + fac + s + far + "<BR>";
-        answer = answer + cml + s + cmc + s + cmr + s + s + wl + s + wc + s + wr + "<BR>";
-        answer = answer + swl + s + swc + s + swr + s + s + asl + s + asc + s + asr + "<BR>";
-        answer = answer + wbl + s + wbc + s + wbr + s + s + ssl + s + ssc + s + ssr + "<BR>";
-        answer = answer + abl + s + abc + s + abr + s + s + gsl + s + gsc + s + gsr + "<BR>";
-        answer = answer + bll + s + blc + s + blr + s + s + fml + s + fmc + s + fmr + "<BR>"
+        answer = answer + "Melee and range values:<br/>";
+        answer = answer + rawMeleeLeft + s + rawMeleeCenter + s + rawMeleeRight + "<br/>";
+        answer = answer + rawRangedLeft + s + rawRangedCenter + s + rawRangedRight + "<br/>";
     }
 
-    attwl = 10 * ll + 15 * stl + 20 * el;
-    attwc = 10 * lc + 15 * stc + 20 * ec;
-    attwr = 10 * lr + 15 * str + 20 * er;
-    attgc = 10 * brc + 15 * irc + 20 * hrc;
-    attrl = 5 * nl + 10 * cml + 15 * swl;
-    attrc = 5 * nc + 10 * cmc + 15 * swc;
-    attrr = 5 * nr + 10 * cmr + 15 * swr;
-    attml = 5 * wbl + 10 * abl + 15 * bll;
-    attmc = 5 * wbc + 10 * abc + 15 * blc;
-    attmr = 5 * wbr + 10 * abr + 15 * blr;
+    // This is where we calculate the attacking troops raw attack scores.
+    // It gets the value from the corresponding troop's box, and multiplies it
+    // by the unit's attack score.
+    // initialize raw attack values
+    var meleeAttackLeft = 0;
+    var meleeAttackCenter = 0;
+    var meleeAttackRight = 0;
+    var rangedAttackLeft = 0;
+    var rangedAttackCenter = 0;
+    var rangedAttackRight = 0;
 
-    defwl = 25 * rl + 40 * tl + 50 * mal;
-    defwc = 25 * rc + 40 * tc + 50 * mac;
-    defwr = 25 * rr + 40 * tr + 50 * mar;
-    defgc = 35 * grc + 60 * imc + 75 * pc;
-    defrl = 25 * fal + 50 * wl + 70 * asl;
-    defrc = 25 * fac + 50 * wc + 70 * asc;
-    defrr = 25 * far + 50 * wr + 70 * asr;
-    defml = 35 * ssl + 80 * gsl + 110 * fml;
-    defmc = 35 * ssc + 80 * gsc + 110 * fmc;
-    defmr = 35 * ssr + 80 * gsr + 110 * fmr;
+    // Here we go. Cast each form value as a number.
+    // Spearman
+    meleeAttackLeft = meleeAttackLeft + 25 * Number(Form.SL.value);
+    meleeAttackCenter = meleeAttackCenter + 25 * Number(Form.SC.value);
+    meleeAttackRight = meleeAttackRight + 25 * Number(Form.SR.value);
 
-    if (debug) {
-        s = "&nbsp;";
-        answer = answer + "Tool calculations:<BR>";
-        answer = answer + attwl + s + attwc + s + attwr + s + s + defwl + s + defwc + s + defwr + "<BR>";
-        answer = answer + attgc + s + defgc + "<BR>";
-        answer = answer + attrl + s + attrc + s + attrr + s + s + defrl + s + defrc + s + defrr + "<BR>";
-        answer = answer + attml + s + attmc + s + attmr + s + s + defml + s + defmc + s + defmr + "<BR>"
-    }
+    // Bowman
+    rangedAttackLeft = rangedAttackLeft + 23 * Number(Form.BL.value);
+    rangedAttackCenter = rangedAttackCenter + 23 * Number(Form.BC.value);
+    rangedAttackRight = rangedAttackRight + 23 * Number(Form.BR.value);
 
-    casw = Number(Form.CasWall.value);
-    if (casw < 0 || casw > 100) {
-        answer = answer + "Problem with Castellan wall value<BR>"
-    }
-    casg = Number(Form.CasGate.value);
-    if (casg < 0 || casg > 100) {
-        answer = answer + "Problem with Castellan gate value<BR>"
-    }
-    casd = Number(Form.CasMoat.value);
-    if (casd < 0 || casd > 100) {
-        answer = answer + "Problem with Castellan moat value<BR>"
-    }
-    casm = Number(Form.CasMelee.value);
-    if (casm < 0 || casm > 100) {
-        answer = answer + "Problem with Castellan melee value<BR>"
-    }
-    casr = Number(Form.CasRange.value);
-    if (casr < 0 || casr > 100) {
-        answer = answer + "Problem with Castellan range value<BR>"
-    }
-    comw = Number(Form.ComWall.value);
-    if (comw < 0 || comw > 100) {
-        answer = answer + "Problem with Commander wall value<BR>"
-    }
-    comg = Number(Form.ComGate.value);
-    if (comg < 0 || comg > 100) {
-        answer = answer + "Problem with Commander gate value<BR>"
-    }
-    comd = Number(Form.ComMoat.value);
-    if (comd < 0 || comd > 100) {
-        answer = answer + "Problem with Commander moat value<BR>"
-    }
-    comm = Number(Form.ComMelee.value);
-    if (comm < 0 || comm > 100) {
-        answer = answer + "Problem with Commander melee value<BR>"
-    }
-    comr = Number(Form.ComRange.value);
-    if (comr < 0 || comr > 100) {
-        answer = answer + "Problem with Commander range value<BR>"
-    }
+    // Maceman
+    meleeAttackLeft = meleeAttackLeft + 38 * Number(Form.ML.value);
+    meleeAttackCenter = meleeAttackCenter + 38 * Number(Form.MC.value);
+    meleeAttackRight = meleeAttackRight + 38 * Number(Form.MR.value);
 
-    m0 = m0 + defwl + defml - attwl - attml + casw + casd - comw - comd;
-    if (m0 < 0) {
-        m0 = 0
-    }
-    m1 = m1 + defwc + defgc + defmc + casw + casg + casd - attwc - attgc - attmc - comw - comg - comd;
-    if (m1 < 0) {
-        m1 = 0
-    }
-    m2 = m2 + defwr + defmr + casw + casd - attwr - attmr - comw - comd;
-    if (m2 < 0) {
-        m2 = 0
-    }
-    r0 = r0 + defwl + defrl + defml + casw + casd - attwl - attrl - attml - comw - comd;
-    if (r0 < -attrl) {
-        r0 = -attrl
-    }
-    r1 = r1 + defwc + defgc + defrc + defmc + casw + casg + casd - attwc - attgc - attrc - attmc - comw - comg - comd;
-    if (r1 < -attrc) {
-        r1 = -attrc
-    }
-    r2 = r2 + defwr + defrr + defmr + casw + casd - attwr - attrr - attmr - comw - comd;
-    if (r2 < -attrr) {
-        r2 = -attrr
-    }
-    m0 = m0 + casm - comm;
-    m1 = m1 + casm - comm;
-    m2 = m2 + casm - comm;
-    r0 = r0 + casr - comr;
-    r1 = r1 + casr - comr;
-    r2 = r2 + casr - comr;
+    // Crossbowman
+    rangedAttackLeft = rangedAttackLeft + 39 * Number(Form.CL.value);
+    rangedAttackCenter = rangedAttackCenter + 39 * Number(Form.CC.value);
+    rangedAttackRight = rangedAttackRight + 39 * Number(Form.CR.value);
 
-    if (debug) {
-        s = "&nbsp;";
-        answer = answer + "Melee and range values:<BR>";
-        answer = answer + m0 + s + m1 + s + m2 + "<BR>";
-        answer = answer + r0 + s + r1 + s + r2 + "<BR>"
-    }
+    // Swordsman
+    meleeAttackLeft = meleeAttackLeft + 31 * Number(Form.GL.value);
+    meleeAttackCenter = meleeAttackCenter + 31 * Number(Form.GC.value);
+    meleeAttackRight = meleeAttackRight + 31 * Number(Form.GR.value);
 
-    lm = 0;
-    cm = 0;
-    rm = 0;
-    lr = 0;
-    cr = 0;
-    rr = 0;
-    lm = lm + 25 * Number(Form.SL.value);
-    cm = cm + 25 * Number(Form.SC.value);
-    rm = rm + 25 * Number(Form.SR.value);
-    lr = lr + 23 * Number(Form.BL.value);
-    cr = cr + 23 * Number(Form.BC.value);
-    rr = rr + 23 * Number(Form.BR.value);
-    lm = lm + 38 * Number(Form.ML.value);
-    cm = cm + 38 * Number(Form.MC.value);
-    rm = rm + 38 * Number(Form.MR.value);
-    lr = lr + 39 * Number(Form.CL.value);
-    cr = cr + 39 * Number(Form.CC.value);
-    rr = rr + 39 * Number(Form.CR.value);
-    lm = lm + 31 * Number(Form.GL.value);
-    cm = cm + 31 * Number(Form.GC.value);
-    rm = rm + 31 * Number(Form.GR.value);
-    lr = lr + 10 * Number(Form.AL.value);
-    cr = cr + 10 * Number(Form.AC.value);
-    rr = rr + 10 * Number(Form.AR.value);
-    lm = lm + 17 * Number(Form.HL.value);
-    cm = cm + 17 * Number(Form.HC.value);
-    rm = rm + 17 * Number(Form.HR.value);
-    lr = lr + 20 * Number(Form.OL.value);
-    cr = cr + 20 * Number(Form.OC.value);
-    rr = rr + 20 * Number(Form.OR.value);
-    lm = lm + 109 * Number(Form.ZL.value);
-    cm = cm + 109 * Number(Form.ZC.value);
-    rm = rm + 109 * Number(Form.ZR.value);
-    lr = lr + 92 * Number(Form.XL.value);
-    cr = cr + 92 * Number(Form.XC.value);
-    rr = rr + 92 * Number(Form.XR.value);
-    if (debug) {
-        answer = answer + "Z: " + Number(Form.ZL.value) + s + Number(Form.ZC.value) + s + Number(Form.ZR.value) + "<BR>";
-        answer = answer + "R: " + Number(Form.XL.value) + s + Number(Form.XC.value) + s + Number(Form.XR.value) + "<BR>"
-    }
-    lm = lm + 15 * Number(Form.VSL.value);
-    cm = cm + 15 * Number(Form.VSC.value);
-    rm = rm + 15 * Number(Form.VSR.value);
-    lr = lr + 18 * Number(Form.VBL.value);
-    cr = cr + 18 * Number(Form.VBC.value);
-    rr = rr + 18 * Number(Form.VBR.value);
-    lm = lm + 118 * Number(Form.VML.value);
-    cm = cm + 118 * Number(Form.VMC.value);
-    rm = rm + 118 * Number(Form.VMR.value);
-    lr = lr + 98 * Number(Form.VCL.value);
-    cr = cr + 98 * Number(Form.VCC.value);
-    rr = rr + 98 * Number(Form.VCR.value);
-    lm = lm + 111 * Number(Form.VGL.value);
-    cm = cm + 111 * Number(Form.VGC.value);
-    rm = rm + 111 * Number(Form.VGR.value);
-    lm = lm + 38 * Number(Form.SML.value);
-    cm = cm + 38 * Number(Form.SMC.value);
-    rm = rm + 38 * Number(Form.SMR.value);
-    lr = lr + 39 * Number(Form.SCL.value);
-    cr = cr + 39 * Number(Form.SCC.value);
-    rr = rr + 39 * Number(Form.SCR.value);
-    lm = lm + 109 * Number(Form.SRL.value);
-    cm = cm + 109 * Number(Form.SRC.value);
-    rm = rm + 109 * Number(Form.SRR.value);
-    lr = lr + 92 * Number(Form.SFL.value);
-    cr = cr + 92 * Number(Form.SFC.value);
-    rr = rr + 92 * Number(Form.SFR.value);
-    lm = lm + 113 * Number(Form.MAL.value);
-    cm = cm + 113 * Number(Form.MAC.value);
-    rm = rm + 113 * Number(Form.MAR.value);
-    lm = lm + 111 * Number(Form.PYL.value);
-    cm = cm + 111 * Number(Form.PYC.value);
-    rm = rm + 111 * Number(Form.PYR.value);
-    lm = lm + 132 * Number(Form.TZL.value);
-    cm = cm + 132 * Number(Form.TZC.value);
-    rm = rm + 132 * Number(Form.TZR.value);
-    lr = lr + 121 * Number(Form.TXL.value);
-    cr = cr + 121 * Number(Form.TXC.value);
-    rr = rr + 121 * Number(Form.TXR.value);
-    lm = lm + 138 * Number(Form.KZL.value);
-    cm = cm + 138 * Number(Form.KZC.value);
-    rm = rm + 138 * Number(Form.KZR.value);
-    lr = lr + 127 * Number(Form.KXL.value);
-    cr = cr + 127 * Number(Form.KXC.value);
-    rr = rr + 127 * Number(Form.KXR.value);
-    lm = lm + 14 * Number(Form.KHL.value);
-    cm = cm + 14 * Number(Form.KHC.value);
-    rm = rm + 14 * Number(Form.KHR.value);
-    lr = lr + 16 * Number(Form.KOL.value);
-    cr = cr + 16 * Number(Form.KOC.value);
-    rr = rr + 16 * Number(Form.KOR.value);
-    lm = lm + 109 * Number(Form.NAL.value);
-    cm = cm + 109 * Number(Form.NAC.value);
-    rm = rm + 109 * Number(Form.NAR.value);
-    lr = lr + 86 * Number(Form.NBL.value);
-    cr = cr + 86 * Number(Form.NBC.value);
-    rr = rr + 86 * Number(Form.NBR.value);
-    lm = lm + 75 * Number(Form.WHL.value);
-    cm = cm + 75 * Number(Form.WHC.value);
-    rm = rm + 75 * Number(Form.WHR.value);
-    lm = lm + 113 * Number(Form.BRL.value);
-    cm = cm + 113 * Number(Form.BRC.value);
-    rm = rm + 113 * Number(Form.BRR.value);
-    lm = lm + 111 * Number(Form.SWL.value);
-    cm = cm + 111 * Number(Form.SWC.value);
-    rm = rm + 111 * Number(Form.SWR.value);
-    lr = lr + 94 * Number(Form.DBL.value);
-    cr = cr + 94 * Number(Form.DBC.value);
-    rr = rr + 94 * Number(Form.DBR.value);
-    lr = lr + 16 * Number(Form.CAL.value);
-    cr = cr + 16 * Number(Form.CAC.value);
-    rr = rr + 16 * Number(Form.CAR.value);
-    lm = lm + 14 * Number(Form.FBL.value);
-    cm = cm + 14 * Number(Form.FBC.value);
-    rm = rm + 14 * Number(Form.FBR.value);
-    lm = lm + 124 * Number(Form.CWL.value);
-    cm = cm + 124 * Number(Form.CWC.value);
-    rm = rm + 124 * Number(Form.CWR.value);
-    lr = lr + 112 * Number(Form.CBL.value);
-    cr = cr + 112 * Number(Form.CBC.value);
-    rr = rr + 112 * Number(Form.CBR.value);
-    lm = lm + 185 * Number(Form.DZL.value);
-    cm = cm + 185 * Number(Form.DZC.value);
-    rm = rm + 185 * Number(Form.DZR.value);
-    lr = lr + 162 * Number(Form.DXL.value);
-    cr = cr + 162 * Number(Form.DXC.value);
-    rr = rr + 162 * Number(Form.DXR.value);
-    lr = lr + 98 * Number(Form.LBL.value);
-    cr = cr + 98 * Number(Form.LBC.value);
-    rr = rr + 98 * Number(Form.LBR.value);
-    lm = lm + 117 * Number(Form.LWL.value);
-    cm = cm + 117 * Number(Form.LWC.value);
-    rm = rm + 117 * Number(Form.LWR.value);
-    lr = lr + 98 * Number(Form.BBL.value);
-    cr = cr + 98 * Number(Form.BBC.value);
-    rr = rr + 98 * Number(Form.BBR.value);
-    lm = lm + 117 * Number(Form.BWL.value);
-    cm = cm + 117 * Number(Form.BWC.value);
-    rm = rm + 117 * Number(Form.BWR.value);
+    // Archer
+    rangedAttackLeft = rangedAttackLeft + 10 * Number(Form.AL.value);
+    rangedAttackCenter = rangedAttackCenter + 10 * Number(Form.AC.value);
+    rangedAttackRight = rangedAttackRight + 10 * Number(Form.AR.value);
 
-    if (m0 > 0) {
-        fm0 = Math.round(lm * 100 / (100 + m0))
+    // Halberdier
+    meleeAttackLeft = meleeAttackLeft + 17 * Number(Form.HL.value);
+    meleeAttackCenter = meleeAttackCenter + 17 * Number(Form.HC.value);
+    meleeAttackRight = meleeAttackRight + 17 * Number(Form.HR.value);
+
+    // Longbowman
+    rangedAttackLeft = rangedAttackLeft + 20 * Number(Form.OL.value);
+    rangedAttackCenter = rangedAttackCenter + 20 * Number(Form.OC.value);
+    rangedAttackRight = rangedAttackRight + 20 * Number(Form.OR.value);
+
+    // Twohanded Swordsman
+    meleeAttackLeft = meleeAttackLeft + 109 * Number(Form.ZL.value);
+    meleeAttackCenter = meleeAttackCenter + 109 * Number(Form.ZC.value);
+    meleeAttackRight = meleeAttackRight + 109 * Number(Form.ZR.value);
+
+    // Heavy Crossbowman
+    rangedAttackLeft = rangedAttackLeft + 92 * Number(Form.XL.value);
+    rangedAttackCenter = rangedAttackCenter + 92 * Number(Form.XC.value);
+    rangedAttackRight = rangedAttackRight + 92 * Number(Form.XR.value);
+
+    // Veteran Spearman
+    meleeAttackLeft = meleeAttackLeft + 15 * Number(Form.VSL.value);
+    meleeAttackCenter = meleeAttackCenter + 15 * Number(Form.VSC.value);
+    meleeAttackRight = meleeAttackRight + 15 * Number(Form.VSR.value);
+
+    // Veteran Bowman
+    rangedAttackLeft = rangedAttackLeft + 18 * Number(Form.VBL.value);
+    rangedAttackCenter = rangedAttackCenter + 18 * Number(Form.VBC.value);
+    rangedAttackRight = rangedAttackRight + 18 * Number(Form.VBR.value);
+
+    // Veteran Maceman
+    meleeAttackLeft = meleeAttackLeft + 118 * Number(Form.VML.value);
+    meleeAttackCenter = meleeAttackCenter + 118 * Number(Form.VMC.value);
+    meleeAttackRight = meleeAttackRight + 118 * Number(Form.VMR.value);
+
+    //Veteran Crossbowman
+    rangedAttackLeft = rangedAttackLeft + 98 * Number(Form.VCL.value);
+    rangedAttackCenter = rangedAttackCenter + 98 * Number(Form.VCC.value);
+    rangedAttackRight = rangedAttackRight + 98 * Number(Form.VCR.value);
+
+    // Veteran Swordsman ** Should be removed!!!
+    meleeAttackLeft = meleeAttackLeft + 111 * Number(Form.VGL.value);
+    meleeAttackCenter = meleeAttackCenter + 111 * Number(Form.VGC.value);
+    meleeAttackRight = meleeAttackRight + 111 * Number(Form.VGR.value);
+
+    // Shadow Maceman
+    meleeAttackLeft = meleeAttackLeft + 38 * Number(Form.SML.value);
+    meleeAttackCenter = meleeAttackCenter + 38 * Number(Form.SMC.value);
+    meleeAttackRight = meleeAttackRight + 38 * Number(Form.SMR.value);
+
+    // Shadow Crossbowman
+    rangedAttackLeft = rangedAttackLeft + 39 * Number(Form.SCL.value);
+    rangedAttackCenter = rangedAttackCenter + 39 * Number(Form.SCC.value);
+    rangedAttackRight = rangedAttackRight + 39 * Number(Form.SCR.value);
+
+    // Shadow Rogue
+    meleeAttackLeft = meleeAttackLeft + 109 * Number(Form.SRL.value);
+    meleeAttackCenter = meleeAttackCenter + 109 * Number(Form.SRC.value);
+    meleeAttackRight = meleeAttackRight + 109 * Number(Form.SRR.value);
+
+    // Shadow Felon
+    rangedAttackLeft = rangedAttackLeft + 92 * Number(Form.SFL.value);
+    rangedAttackCenter = rangedAttackCenter + 92 * Number(Form.SFC.value);
+    rangedAttackRight = rangedAttackRight + 92 * Number(Form.SFR.value);
+
+    // Marauder
+    meleeAttackLeft = meleeAttackLeft + 113 * Number(Form.MAL.value);
+    meleeAttackCenter = meleeAttackCenter + 113 * Number(Form.MAC.value);
+    meleeAttackRight = meleeAttackRight + 113 * Number(Form.MAR.value);
+
+    // Pyromaniac
+    meleeAttackLeft = meleeAttackLeft + 111 * Number(Form.PYL.value);
+    meleeAttackCenter = meleeAttackCenter + 111 * Number(Form.PYC.value);
+    meleeAttackRight = meleeAttackRight + 111 * Number(Form.PYR.value);
+
+    // Travelling Knight
+    meleeAttackLeft = meleeAttackLeft + 132 * Number(Form.TZL.value);
+    meleeAttackCenter = meleeAttackCenter + 132 * Number(Form.TZC.value);
+    meleeAttackRight = meleeAttackRight + 132 * Number(Form.TZR.value);
+
+    // Travelling Crossbowman
+    rangedAttackLeft = rangedAttackLeft + 121 * Number(Form.TXL.value);
+    rangedAttackCenter = rangedAttackCenter + 121 * Number(Form.TXC.value);
+    rangedAttackRight = rangedAttackRight + 121 * Number(Form.TXR.value);
+
+    // Knight of the Kingsguard
+    meleeAttackLeft = meleeAttackLeft + 138 * Number(Form.KZL.value);
+    meleeAttackCenter = meleeAttackCenter + 138 * Number(Form.KZC.value);
+    meleeAttackRight = meleeAttackRight + 138 * Number(Form.KZR.value);
+
+    // Bowman of the Kingsguard
+    rangedAttackLeft = rangedAttackLeft + 127 * Number(Form.KXL.value);
+    rangedAttackCenter = rangedAttackCenter + 127 * Number(Form.KXC.value);
+    rangedAttackRight = rangedAttackRight + 127 * Number(Form.KXR.value);
+
+    // Sentinel of Kingsguard
+    meleeAttackLeft = meleeAttackLeft + 14 * Number(Form.KHL.value);
+    meleeAttackCenter = meleeAttackCenter + 14 * Number(Form.KHC.value);
+    meleeAttackRight = meleeAttackRight + 14 * Number(Form.KHR.value);
+
+    // Scout of Kingsguard
+    rangedAttackLeft = rangedAttackLeft + 16 * Number(Form.KOL.value);
+    rangedAttackCenter = rangedAttackCenter + 16 * Number(Form.KOC.value);
+    rangedAttackRight = rangedAttackRight + 16 * Number(Form.KOR.value);
+
+    // Norseman with Ax
+    meleeAttackLeft = meleeAttackLeft + 109 * Number(Form.NAL.value);
+    meleeAttackCenter = meleeAttackCenter + 109 * Number(Form.NAC.value);
+    meleeAttackRight = meleeAttackRight + 109 * Number(Form.NAR.value);
+
+    // Norseman with Bow
+    rangedAttackLeft = rangedAttackLeft + 86 * Number(Form.NBL.value);
+    rangedAttackCenter = rangedAttackCenter + 86 * Number(Form.NBC.value);
+    rangedAttackRight = rangedAttackRight + 86 * Number(Form.NBR.value);
+
+    // Barbarian
+    meleeAttackLeft = meleeAttackLeft + 113 * Number(Form.BRL.value);
+    meleeAttackCenter = meleeAttackCenter + 113 * Number(Form.BRC.value);
+    meleeAttackRight = meleeAttackRight + 113 * Number(Form.BRR.value);
+
+    // Desert Bowman
+    rangedAttackLeft = rangedAttackLeft + 94 * Number(Form.DBL.value);
+    rangedAttackCenter = rangedAttackCenter + 94 * Number(Form.DBC.value);
+    rangedAttackRight = rangedAttackRight + 94 * Number(Form.DBR.value);
+
+    // Cultist Warrior
+    meleeAttackLeft = meleeAttackLeft + 124 * Number(Form.CWL.value);
+    meleeAttackCenter = meleeAttackCenter + 124 * Number(Form.CWC.value);
+    meleeAttackRight = meleeAttackRight + 124 * Number(Form.CWR.value);
+
+    // Cultist Bowman
+    rangedAttackLeft = rangedAttackLeft + 112 * Number(Form.CBL.value);
+    rangedAttackCenter = rangedAttackCenter + 112 * Number(Form.CBC.value);
+    rangedAttackRight = rangedAttackRight + 112 * Number(Form.CBR.value);
+
+    // Demon Horror
+    meleeAttackLeft = meleeAttackLeft + 185 * Number(Form.DZL.value);
+    meleeAttackCenter = meleeAttackCenter + 185 * Number(Form.DZC.value);
+    meleeAttackRight = meleeAttackRight + 185 * Number(Form.DZR.value);
+
+    // Deathly Horror
+    rangedAttackLeft = rangedAttackLeft + 162 * Number(Form.DXL.value);
+    rangedAttackCenter = rangedAttackCenter + 162 * Number(Form.DXC.value);
+    rangedAttackRight = rangedAttackRight + 162 * Number(Form.DXR.value);
+
+
+    var finalMeleeLeft;
+    if (rawMeleeLeft > 0) {
+        finalMeleeLeft = Math.round(meleeAttackLeft * 100 / (100 + rawMeleeLeft));
     } else {
-        fm0 = Math.round(lm * (100 - m0) / 100)
+        finalMeleeLeft = Math.round(meleeAttackLeft * (100 - rawMeleeLeft) / 100);
     }
-    if (m1 > 0) {
-        fm1 = Math.round(cm * 100 / (100 + m1))
+    var finalMeleeCenter;
+    if (rawMeleeCenter > 0) {
+        finalMeleeCenter = Math.round(meleeAttackCenter * 100 / (100 + rawMeleeCenter));
     } else {
-        fm1 = Math.round(cm * (100 - m1) / 100)
+        finalMeleeCenter = Math.round(meleeAttackCenter * (100 - rawMeleeCenter) / 100);
     }
-    if (m2 > 0) {
-        fm2 = Math.round(rm * 100 / (100 + m2))
+    var finalMeleeRight;
+    if (rawMeleeRight > 0) {
+        finalMeleeRight = Math.round(meleeAttackRight * 100 / (100 + rawMeleeRight));
     } else {
-        fm2 = Math.round(rm * (100 - m2) / 100)
+        finalMeleeRight = Math.round(meleeAttackRight * (100 - rawMeleeRight) / 100);
     }
-    if (r0 > 0) {
-        fr0 = Math.round(lr * 100 / (100 + r0))
+    var finalRangedLeft;
+    if (rawRangedLeft > 0) {
+        finalRangedLeft = Math.round(rangedAttackLeft * 100 / (100 + rawRangedLeft));
     } else {
-        fr0 = Math.round(lr * (100 - r0) / 100)
+        finalRangedLeft = Math.round(rangedAttackLeft * (100 - rawRangedLeft) / 100);
     }
-    if (r1 > 0) {
-        fr1 = Math.round(cr * 100 / (100 + r1))
+    var finalRangedCenter;
+    if (rawRangedCenter > 0) {
+        finalRangedCenter = Math.round(rangedAttackCenter * 100 / (100 + rawRangedCenter));
     } else {
-        fr1 = Math.round(cr * (100 - r1) / 100)
+        finalRangedCenter = Math.round(rangedAttackCenter * (100 - rawRangedCenter) / 100);
     }
-    if (r2 > 0) {
-        fr2 = Math.round(rr * 100 / (100 + r2))
+    var finalRangedRight;
+    if (rawRangedRight > 0) {
+        finalRangedRight = Math.round(rangedAttackRight * 100 / (100 + rawRangedRight));
     } else {
-        fr2 = Math.round(rr * (100 - r2) / 100)
+        finalRangedRight = Math.round(rangedAttackRight * (100 - rawRangedRight) / 100);
     }
 
     s = "&nbsp;";
-    answer = answer + "melee coefficients: " + m0 + s + m1 + s + m2 + "<BR>";
-    answer = answer + "range coefficients: " + r0 + s + r1 + s + r2 + "<BR>";
-    answer = answer + "raw melee numbers: " + lm + s + cm + s + rm + "<BR>";
-    answer = answer + "raw range numbers: " + lr + s + cr + s + rr + "<BR>";
+    answer = answer + "melee coefficients: " + rawMeleeLeft + s + rawMeleeCenter + s + rawMeleeRight + "<br/>";
+    answer = answer + "range coefficients: " + rawRangedLeft + s + rawRangedCenter + s + rawRangedRight + "<br/>";
+    answer = answer + "raw melee numbers: " + meleeAttackLeft + s + meleeAttackCenter + s + meleeAttackRight + "<br/>";
+    answer = answer + "raw range numbers: " + rangedAttackLeft + s + rangedAttackCenter + s + rangedAttackRight + "<br/>";
 
-    ta = lm + cm + rm + lr + cr + rr;
-    if (ta == 0) {
-        answer = answer + "Some bad information here... you do NOT want to see my solution.<BR>"
+    var totalAttack = meleeAttackLeft + meleeAttackCenter + meleeAttackRight + rangedAttackLeft + rangedAttackCenter + rangedAttackRight;
+    if (totalAttack == 0) {
+        answer = answer + "Some bad information here... fix your inputs and do NOT want use my solution.<br/>";
     } else {
-        answer = answer + "the attack coming is: " + Math.round((lm + lr) / ta * 100) + " - " + Math.round((cm + cr) / ta * 100) + " - " + Math.round((rm + rr) / ta * 100) + "<BR>";
-        if (lm + lr == 0) {
-            answer = answer + "and is 0 / 0 on the left<BR>"
+        answer = answer + "the attack coming is: " + Math.round((meleeAttackLeft + rangedAttackLeft) / totalAttack * 100) + " - " + Math.round((meleeAttackCenter + rangedAttackCenter) / totalAttack * 100) + " - " + Math.round((meleeAttackRight + rangedAttackRight) / totalAttack * 100) + "<br/>";
+        if (meleeAttackLeft + rangedAttackLeft == 0) {
+            answer = answer + "and is 0 / 0 on the left<br/>";
         } else {
-            answer = answer + "and is " + Math.round(lm / (lm + lr) * 100) + " / " + Math.round(lr / (lm + lr) * 100) + " melee/range on the left<BR>"
+            answer = answer + "and is " + Math.round(meleeAttackLeft / (meleeAttackLeft + rangedAttackLeft) * 100) + " / " + Math.round(rangedAttackLeft / (meleeAttackLeft + rangedAttackLeft) * 100);
+            answer += " melee/range on the left<br/>";
         }
-        if (cm + cr == 0) {
-            answer = answer + " and is 0 / 0 in the center<BR>"
+        if (meleeAttackCenter + rangedAttackCenter == 0) {
+            answer = answer + " and is 0 / 0 in the center<br/>";
         } else {
-            answer = answer + "and is " + Math.round(cm / (cm + cr) * 100) + " / " + Math.round(cr / (cm + cr) * 100) + " melee/range in the center<BR>"
+            answer = answer + "and is " + Math.round(meleeAttackCenter / (meleeAttackCenter + rangedAttackCenter) * 100) + " / " + Math.round(rangedAttackCenter / (meleeAttackCenter + rangedAttackCenter) * 100) + " melee/range in the center<br/>";
         }
-        if (rm + rr == 0) {
-            answer = answer + " and is 0 / 0 on the right<BR>"
+        if (meleeAttackRight + rangedAttackRight == 0) {
+            answer = answer + " and is 0 / 0 on the right<br/>";
         } else {
-            answer = answer + "and is " + Math.round(rm / (rm + rr) * 100) + " / " + Math.round(rr / (rm + rr) * 100) + " melee/range on the right<BR>"
+            answer = answer + "and is " + Math.round(meleeAttackRight / (meleeAttackRight + rangedAttackRight) * 100) + " / " + Math.round(rangedAttackRight / (meleeAttackRight + rangedAttackRight) * 100) + " melee/range on the right<br/>";
         }
     }
 
-    answer = answer + "THE ABOVE IS CORRECT AND USEFUL (as of this posting)<BR><BR>"
-    answer = answer + "THE FOLLOWING IS ARGUABLY GOOD ADVICE:<BR>"
-    answer = answer + "Final results:<BR>";
-    answer = answer + "melee: " + fm0 + s + fm1 + s + fm2 + "<BR>";
-    answer = answer + "range: " + fr0 + s + fr1 + s + fr2 + "<BR>";
+    answer = answer + "THE ABOVE IS CORRECT AND USEFUL<br/><br/>";
+    answer = answer + "THE FOLLOWING IS ARGUABLY GOOD ADVICE:<br/>";
+    answer = answer + "Final results:<br/>";
+    answer = answer + "melee: " + finalMeleeLeft + s + finalMeleeCenter + s + finalMeleeRight + "<br/>";
+    answer = answer + "range: " + finalRangedLeft + s + finalRangedCenter + s + finalRangedRight + "<br/>";
 
-    answer = answer + "Using " + mdefname + " and " + rdefname + ", you will need:<BR>";
-    ffm0 = Math.round(fm0 / mdefval);
-    ffm1 = Math.round(fm1 / mdefval);
-    ffm2 = Math.round(fm2 / mdefval);
-    ffr0 = Math.round(fr0 / rdefval);
-    ffr1 = Math.round(fr1 / rdefval);
-    ffr2 = Math.round(fr2 / rdefval);
-    answer = answer + ffm0 + s + ffm1 + s + ffm2 + s + mdefname + "<BR>";
-    answer = answer + ffr0 + s + ffr1 + s + ffr2 + s + rdefname + "<BR>";
 
-    answer = answer + "<BR>Using very primitive (stupid) AI, I think that:<BR>";
-    ftot = fm0 + fm1 + fm2 + fr0 + fr1 + fr2;
-    x1 = Math.round(fm0 / (fm0 + fr0) * 100);
-    x2 = Math.round(fm1 / (fm1 + fr1) * 100);
-    x3 = Math.round(fm2 / (fm2 + fr2) * 100);
-    y1 = Math.round(fr0 / (fm0 + fr0) * 100);
-    y2 = Math.round(fr1 / (fm1 + fr1) * 100);
-    y3 = Math.round(fr2 / (fm2 + fr2) * 100);
-    if (ffm0 + ffm1 + ffm2 + ffr0 + ffr1 + ffr2 <= troops) {
-        answer = answer + "You can hold all three walls!<BR>";
-        answer = answer + "Set your walls to " + Math.round((fm0 + fr0) / ftot * 100) +
-            " - " + Math.round((fm1 + fr1) / ftot * 100) + " - " + Math.round((fm2 + fr2) / ftot * 100) + "<BR>";
-        answer = answer + "and use M/R of: " + x1 + "/" + y1 + s + x2 + "/" + y2 + s + x3 + "/" + y3 + "<BR>"
-    } else if (ffm0 + ffr0 + ffm1 + ffr1 <= troops) {
-        answer = answer + "You can hold the left and center!<BR>";
-        answer = answer + "Set your walls to " + Math.round((fm0 + fr0) / (fm0 + fr0 + fm1 + fr1) * 100) +
-            " - " + Math.round((fm1 + fr1) / (fm0 + fr0 + fm1 + fr1) * 100) + " - 0 <BR>";
-        answer = answer + "and use M/R of: " + x1 + "/" + y1 + s + x2 + "/" + y2 + " 50/50<BR>"
-    } else if (ffm1 + ffr1 + ffm2 + ffr2 <= troops) {
-        answer = answer + "You can hold the center and right!<BR>";
-        answer = answer + "Set your walls to 0 - " + Math.round((fm1 + fr1) / (fm1 + fr1 + fm2 + fr2) * 100) + " - " + Math.round((fm2 + fr2) / (fm1 + fr1 + fm2 + fr2) * 100) + "<BR>";
-        answer = answer + "and use M/R of: 50/50 " + x2 + "/" + y2 + s + x3 + "/" + y3 + "<BR>"
-    } else if (ffm0 + ffr0 + ffm2 + ffr2 <= troops) {
-        answer = answer + "You can hold the left and right walls!<BR>";
-        answer = answer + "Set your walls to " + Math.round((fm0 + fr0) / (fm0 + fr0 + fm2 + fr2) * 100) + " - 0 - " + Math.round((fm2 + fr2) / (fm0 + fr0 + fm2 + fr2) * 100) + "<BR>";
-        answer = answer + "and use M/R of: " + x1 + "/" + y1 + " 50/50 " + x3 + "/" + y3 + "<BR>"
-    } else if (ffm1 + ffr1 <= troops) {
-        answer = answer + "Well, you can hold the center, and that is something, right?<BR>";
-        answer = answer + "Set your walls to 0 - 100 - 0 and pray. That's your best bet.<BR>";
-        answer = answer + "and use M/R of: " + x2 + "/" + y2 + "<BR>"
-    } else if (ffm0 + ffr0 <= troops) {
-        answer = answer + "Well, hang on to the left wall, at least you can do that.<BR>";
-        answer = answer + "Set your walls to 100 - 0 - 0 and pray. That's your best bet.<BR>";
-        answer = answer + "and use M/R of: " + x1 + "/" + y1 + "<BR>"
-    } else if (ffm2 + ffr2 <= troops) {
-        answer = answer + "Well, hang on to the right wall, at least you can do that.<BR>";
-        answer = answer + "Set your walls to 0 - 0 - 100 and pray. That's your best bet.<BR>";
-        answer = answer + "and use M/R of: " + x3 + "/" + y3 + "<BR>"
+    var meleeDefenderCountLeft = Math.round(finalMeleeLeft / meleeDefenseVal);
+    var meleeDefenderCountCenter = Math.round(finalMeleeCenter / meleeDefenseVal);
+    var meleeDefenderCountRight = Math.round(finalMeleeRight / meleeDefenseVal);
+    var rangedDefenderCountLeft = Math.round(finalRangedLeft / rangedDefenseVal);
+    var rangedDefenderCountCenter = Math.round(finalRangedCenter / rangedDefenseVal);
+    var rangedDefenderCountRight = Math.round(finalRangedRight / rangedDefenseVal);
+
+    answer = answer + "Using " + meleeDefenderName + " and " + rangedDefenderName + ", you will need:<br/>";
+    answer = answer + meleeDefenderCountLeft + s + meleeDefenderCountCenter + s + meleeDefenderCountRight + s + meleeDefenderName + "<br/>";
+    answer = answer + rangedDefenderCountLeft + s + rangedDefenderCountCenter + s + rangedDefenderCountRight + s + rangedDefenderName + "<br/>";
+
+    var totalAttackScore = finalMeleeLeft + finalMeleeCenter + finalMeleeRight + finalRangedLeft + finalRangedCenter + finalRangedRight;
+    var meleePercentageLeft = Math.round(finalMeleeLeft / (finalMeleeLeft + finalRangedLeft) * 100);
+    var meleePercentageCenter = Math.round(finalMeleeCenter / (finalMeleeCenter + finalRangedCenter) * 100);
+    var meleePercentageRight = Math.round(finalMeleeRight / (finalMeleeRight + finalRangedRight) * 100);
+    var rangedPercentageLeft = Math.round(finalRangedLeft / (finalMeleeLeft + finalRangedLeft) * 100);
+    var rangedPercentageCenter = Math.round(finalRangedCenter / (finalMeleeCenter + finalRangedCenter) * 100);
+    var rangedPercentageRight = Math.round(finalRangedRight / (finalMeleeRight + finalRangedRight) * 100);
+
+    answer = answer + "<br/>I think that:<br/>";
+    if (meleeDefenderCountLeft + meleeDefenderCountCenter + meleeDefenderCountRight + rangedDefenderCountLeft + rangedDefenderCountCenter + rangedDefenderCountRight <= troops) {
+        answer = answer + "You can hold all three walls!<br/>";
+        answer = answer + "Set your walls to " + Math.round((finalMeleeLeft + finalRangedLeft) / totalAttackScore * 100) + " - " + Math.round((finalMeleeCenter + finalRangedCenter) / totalAttackScore * 100) + " - " + Math.round((finalMeleeRight + finalRangedRight) / totalAttackScore * 100) + "<br/>";
+        answer = answer + "and use M/R of: " + meleePercentageLeft + "/" + rangedPercentageLeft + s + meleePercentageCenter + "/" + rangedPercentageCenter + s + meleePercentageRight + "/" + rangedPercentageRight + "<br/>";
+    } else if (meleeDefenderCountLeft + rangedDefenderCountLeft + meleeDefenderCountCenter + rangedDefenderCountCenter <= troops) {
+        answer = answer + "You can hold the left and center!<br/>";
+        answer = answer + "Set your walls to " + Math.round((finalMeleeLeft + finalRangedLeft) / (finalMeleeLeft + finalRangedLeft + finalMeleeCenter + finalRangedCenter) * 100) + " - " + Math.round((finalMeleeCenter + finalRangedCenter) / (finalMeleeLeft + finalRangedLeft + finalMeleeCenter + finalRangedCenter) * 100) + " - 0 <br/>";
+        answer = answer + "and use M/R of: " + meleePercentageLeft + "/" + rangedPercentageLeft + s + meleePercentageCenter + "/" + rangedPercentageCenter + " 50/50<br/>";
+    } else if (meleeDefenderCountCenter + rangedDefenderCountCenter + meleeDefenderCountRight + rangedDefenderCountRight <= troops) {
+        answer = answer + "You can hold the center and right!<br/>";
+        answer = answer + "Set your walls to 0 - " + Math.round((finalMeleeCenter + finalRangedCenter) / (finalMeleeCenter + finalRangedCenter + finalMeleeRight + finalRangedRight) * 100) + " - " + Math.round((finalMeleeRight + finalRangedRight) / (finalMeleeCenter + finalRangedCenter + finalMeleeRight + finalRangedRight) * 100) + "<br/>";
+        answer = answer + "and use M/R of: 50/50 " + meleePercentageCenter + "/" + rangedPercentageCenter + s + meleePercentageRight + "/" + rangedPercentageRight + "<br/>";
+    } else if (meleeDefenderCountLeft + rangedDefenderCountLeft + meleeDefenderCountRight + rangedDefenderCountRight <= troops) {
+        answer = answer + "You can hold the left and right walls!<br/>";
+        answer = answer + "Set your walls to " + Math.round((finalMeleeLeft + finalRangedLeft) / (finalMeleeLeft + finalRangedLeft + finalMeleeRight + finalRangedRight) * 100) + " - 0 - " + Math.round((finalMeleeRight + finalRangedRight) / (finalMeleeLeft + finalRangedLeft + finalMeleeRight + finalRangedRight) * 100) + "<br/>";
+        answer = answer + "and use M/R of: " + meleePercentageLeft + "/" + rangedPercentageLeft + " 50/50 " + meleePercentageRight + "/" + rangedPercentageRight + "<br/>";
+    } else if (meleeDefenderCountCenter + rangedDefenderCountCenter <= troops) {
+        answer = answer + "Well, you can hold the center, and that is something, right?<br/>";
+        answer = answer + "Set your walls to 0 - 100 - 0 and pray. That's your best bet.<br/>";
+        answer = answer + "and use M/R of: " + meleePercentageCenter + "/" + rangedPercentageCenter + "<br/>";
+    } else if (meleeDefenderCountLeft + rangedDefenderCountLeft <= troops) {
+        answer = answer + "Well, hang on to the left wall, at least you can do that.<br/>";
+        answer = answer + "Set your walls to 100 - 0 - 0 and pray. That's your best bet.<br/>";
+        answer = answer + "and use M/R of: " + meleePercentageLeft + "/" + rangedPercentageLeft + "<br/>";
+    } else if (meleeDefenderCountRight + rangedDefenderCountRight <= troops) {
+        answer = answer + "Well, hang on to the right wall, at least you can do that.<br/>";
+        answer = answer + "Set your walls to 0 - 0 - 100 and pray. That's your best bet.<br/>";
+        answer = answer + "and use M/R of: " + meleePercentageRight + "/" + rangedPercentageRight + "<br/>";
     } else {
-        answer = answer + "Consider opening your gates. Seriously. Move everyone out. Now!<BR>";
-        answer = answer + "Your best bet is to place your head between your legs and kiss your ass goodbye.<BR>"
+        answer = answer + "Consider opening your gates. Seriously. Move everyone out. Now!<br/>";
+        answer = answer + "Your best bet is to place your head between your legs and kiss your ass goodbye.<br/>";
     }
 
     document.getElementById("answer").innerHTML = answer;
@@ -565,60 +684,68 @@ function Combat_calc(Form) {
 
 /* Phil's Espionage Without Spies */
 
+// ReSharper disable InconsistentNaming
+
 function Espi_calc(Form) {
-    t0 = Number(Form.Tower0.value);
-    t1 = Number(Form.Tower1.value);
-    t2 = Number(Form.Tower2.value);
-    t3 = Number(Form.Tower3.value);
-    t4 = Number(Form.Tower4.value);
-    t5 = Number(Form.Tower5.value);
-    if (t0 >= 0 && t1 >= 0 && t2 >= 0 && t3 >= 0 && t4 >= 0 && t5 >= 0 && t0 + t1 + t2 + t3 + t4 + t5 <= 20) {
-        a = 16 * t5 + 13 * t4 + 10 * t3 + 6 * t2 + 3 * t1 + t0 + " men on the walls<BR><BR>"
+    // ReSharper restore InconsistentNaming
+    var towerCount0 = Number(Form.Tower0.value);
+    var towerCount1 = Number(Form.Tower1.value);
+    var towerCount2 = Number(Form.Tower2.value);
+    var towerCount3 = Number(Form.Tower3.value);
+    var towerCount4 = Number(Form.Tower4.value);
+    var answer;
+    var ok = false;
+
+    if (towerCount0 >= 0 && towerCount1 >= 0 && towerCount2 >= 0 && towerCount3 >= 0 && towerCount4 >= 0 && towerCount0 + towerCount1 + towerCount2 + towerCount3 + towerCount4 <= 20) {
+        answer = 13 * towerCount4 + 10 * towerCount3 + 6 * towerCount2 + 3 * towerCount1 + towerCount0 + " men on the walls<br/><br/>";
     } else {
-        a = "Cannot count the men on the walls<BR><BR>"
+        answer = "Cannot count the men on the walls<br/><br/>";
     }
-    ok = false;
-    for (i = 0; i < 5; i++) {
+
+    var wallCoefficient;
+    for (var i = 0; i < 4; i++) {
         if (Form.Walle[i].checked) {
-            w = Number(Form.Walle[i].value);
-            ok = true
+            wallCoefficient = Number(Form.Walle[i].value);
+            ok = true;
         }
     }
     if (ok) {
-        t = 20 * w + 50;
-        a = a + 20 * w + "% wall bonus before tools  (maximum you will face is " + t + "% per section per wave)<BR>";
-        a = a + "Send at least " + Math.round(20 * w / 10) + " ladders or " + Math.round(20 * w / 15) + " siege towers or " + Math.round(20 * w / 20) + " belfries in each section.<BR>";
-        a = a + "But no more than " + Math.round(t / 10) + " ladders or " + Math.round(t / 15) + " siege towers or " + Math.round(t / 20) + " belfries in each section.<BR><BR>"
+        var maxWallPercent = 20 * wallCoefficient + 50;
+        answer = answer + 20 * wallCoefficient + "% wall bonus before tools  (maximum you will face is " + maxWallPercent + "% per section per wave)<br/>";
+        answer = answer + "Send at least " + Math.round(20 * wallCoefficient / 10) + " ladders, " + Math.round(20 * wallCoefficient / 15) + " siege towers, or " + Math.round(20 * wallCoefficient / 20) + " belfries in each section.<br/>";
+        answer = answer + "But no more than " + Math.round(maxWallPercent / 10) + " ladders, " + Math.round(maxWallPercent / 15) + " siege towers, or " + Math.round(maxWallPercent / 20) + " belfries in each section.<br/><br/>";
     } else {
-        a = a + "Cannot calculate the wall bonus<BR><BR>"
+        answer = answer + "Cannot calculate the wall bonus<br/><br/>";
     }
-    g = Number(Form.Gatee.value);
-    if (g > 0 && g < 6) {
-        t = 20 * g + 75;
-        a = a + 20 * g + "% gate bonus before tools (maximum you will face is " + t + "% per section per wave)<BR>";
-        a = a + "Send at least " + Math.round(20 * g / 10) + " battering rams or " + Math.round(20 * g / 15) + " iron rams or " + Math.round(20 * g / 20) + " heavy rams in each section.<BR>";
-        a = a + "But no more than " + Math.round(t / 10) + " battering rams or " + Math.round(t / 15) + " iron rams or " + Math.round(t / 20) + " heavy rams in each section.<BR><BR>"
+    var gateCoefficient = Number(Form.Gatee.value);
+    if (gateCoefficient > 0 && gateCoefficient < 6) {
+        var maxGatePercent = 20 * gateCoefficient + 75;
+        answer = answer + 20 * gateCoefficient + "% gate bonus before tools (maximum you will face is " + maxGatePercent + "% per section per wave)<br/>";
+        answer = answer + "Send at least " + Math.round(20 * gateCoefficient / 10) + " battering rams, " + Math.round(20 * gateCoefficient / 15) + " iron rams, or " + Math.round(20 * gateCoefficient / 20) + " heavy rams in each section.<br/>";
+        answer = answer + "But no more than " + Math.round(maxGatePercent / 10) + " battering rams, " + Math.round(maxGatePercent / 15) + " iron rams, or " + Math.round(maxGatePercent / 20) + " heavy rams in each section.<br/><br/>";
     } else {
-        a = a + "Cannot calculate the gate bonus<BR><BR>"
+        answer = answer + "Cannot calculate the gate bonus<br/><br/>";
     }
     ok = false;
+    var moatCoefficient;
     for (i = 0; i < 3; i++) {
         if (Form.Moate[i].checked) {
-            m = Number(Form.Moate[i].value);
-            ok = true
+            moatCoefficient = Number(Form.Moate[i].value);
+            ok = true;
         }
     }
     if (ok) {
-        if (m > 0) {
-            t = 10 * m + 110;
+        var maxMoatPercent;
+        if (moatCoefficient > 0) {
+            maxMoatPercent = 10 * moatCoefficient + 110;
         } else {
-            t = 0;
+            maxMoatPercent = 0;
         }
-        a = a + 10 * m + "% moat bonus before tools (maximum you will face is " + t + "% per section per wave)<BR>";
-        a = a + "Send at least " + Math.round(10 * m / 5) + " wood bundles or " + Math.round(10 * m / 10) + " assault bridges or " + Math.round(10 * m / 15) + " boulders in each section.<BR>";
-        a = a + "But no more than " + Math.round(t / 5) + " wood bundles or " + Math.round(t / 10) + " assault bridges or " + Math.round(t / 15) + " boulders in each section.<BR><BR>"
+        answer = answer + 10 * moatCoefficient + "% moat bonus before tools (maximum you will face is " + maxMoatPercent + "% per section per wave)<br/>";
+        answer = answer + "Send at least " + Math.round(10 * moatCoefficient / 5) + " wood bundles, " + Math.round(10 * moatCoefficient / 10) + " assault bridges, or " + Math.round(10 * moatCoefficient / 15) + " boulders in each section.<br/>";
+        answer = answer + "But no more than " + Math.round(maxMoatPercent / 5) + " wood bundles, " + Math.round(maxMoatPercent / 10) + " assault bridges, or " + Math.round(maxMoatPercent / 15) + " boulders in each section.<br/><br/>";
     } else {
-        a = a + "Cannot calculate the moat bonus<BR><BR>"
+        answer = answer + "Cannot calculate the moat bonus<br/><br/>";
     }
-    document.getElementById("toolsanswer").innerHTML = a
+    document.getElementById("toolsanswer").innerHTML = answer;
 }
