@@ -7,7 +7,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Four Horsemen - Battle Buddy</title>
+    <title>The Party - Roadhouse Prevention</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet" type="text/css">
@@ -19,6 +19,13 @@
 
     <!-- Custom Theme CSS -->
     <link href="css/grayscale.css" rel="stylesheet">
+    <style>
+
+    #unitsAttacking p
+    {
+        text-align:left;
+    }
+    </style>
 
 </head>
 
@@ -31,7 +38,7 @@
                     <i class="fa fa-bars"></i>
                 </button>
                 <a class="navbar-brand" href="#page-top">
-                    <i class="fa fa-play-circle"></i>  <span class="light">Four</span> Horsemen
+                    <i class="fa fa-play-circle"></i>  <span class="light">The</span> PARTY
                 </a>
             </div>
 
@@ -66,8 +73,8 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-8 col-md-offset-2">
-                        <h1 class="brand-heading">four horsemen</h1>
-                        <p class="intro-text">A collection of tools we find useful for kicking ass as efficiently as we can.</p>
+                        <h1 class="brand-heading">The Party</h1>
+                        <p class="intro-text">Let's get it started, bitches</p>
                         <div class="page-scroll">
                             <a href="#defense" class="btn btn-circle">
                                 <i class="fa fa-angle-double-down animated"></i>
@@ -83,12 +90,10 @@
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2">
                 <h2>defense Calculator</h2>
-                <p>The defense Calculator asks you quesitons about the castle being attacked, and the incoming army. It's faily straightforward. Enter in the information about your catle, and the corresponding information from the attack warning</p>
-				<p>Enter the tools you've got to defend yourself, and press the "Calculate" button. If you get everything right, the answer will be correct. Credits to Phil for the logic and scripts.</p>
-				<form>
-            <p>
-                <input type="BUTTON" onclick="Combat_calc(this.form);" value="Calculate" class="btn btn-default btn-lg"></p>
-            <p id="answer"></p>
+                <p>The defense Calculator asks you quesitons about the castle being attacked, and the incoming army. It's faily straightforward. Enter in the information about your castle, and the corresponding information from the attack warning</p>
+                <p>Enter the tools you've got to defend yourself, and press the "Calculate" button. If you get everything right, the answer will be correct. Credits go to some fucking guy named Phil we hoped made a good effort at doing the math.</p>
+                <p>I know it's ugly. But it works. Shut up.</p>
+		<form>
 
             <h3>Your Castle:</h3>
             <p>
@@ -339,308 +344,323 @@
                         <input name="FMR" size="4" value="0"></td>
                 </tr>
             </table>
+            <br />
             <h3>And the troops attacking, left, center, and right: </h3>
-            <p>
-                &nbsp; S 
-                <input name="SL" size="4" value="0">
-                <input name="SC" size="4" value="0">
-                <input name="SR" size="4" value="0">
-                Spearman
-            </p>
-            <p>
-                &nbsp; B 
-                <input name="BL" size="4" value="0">
-                <input name="BC" size="4" value="0">
-                <input name="BR" size="4" value="0">
-                Bowman
-            </p>
-            <p>
-                &nbsp; M 
-                <input name="ML" size="4" value="0">
-                <input name="MC" size="4" value="0">
-                <input name="MR" size="4" value="0">
-                Maceman
-            </p>
-            <p>
-                &nbsp; C 
-                <input name="CL" size="4" value="0">
-                <input name="CC" size="4" value="0">
-                <input name="CR" size="4" value="0">
-                Crossbowman
-            </p>
-            <p>
-                &nbsp; G 
-                <input name="GL" size="4" value="0">
-                <input name="GC" size="4" value="0">
-                <input name="GR" size="4" value="0">
-                Swordsman
-            </p>
-            <p>
-                &nbsp; A 
-                <input name="AL" size="4" value="0">
-                <input name="AC" size="4" value="0">
-                <input name="AR" size="4" value="0">
-                Archer
-            </p>
-            <p>
-                &nbsp; H 
-                <input name="HL" size="4" value="0">
-                <input name="HC" size="4" value="0">
-                <input name="HR" size="4" value="0">
-                Halberdier
-            </p>
-            <p>
-                &nbsp; O 
-                <input name="OL" size="4" value="0">
-                <input name="OC" size="4" value="0">
-                <input name="OR" size="4" value="0">
-                Longbowman
-            </p>
-            <p>
-                &nbsp; Z 
-                <input name="ZL" size="4" value="0">
-                <input name="ZC" size="4" value="0">
-                <input name="ZR" size="4" value="0">
-                Twohanded Swordman
-            </p>
-            <p>
-                &nbsp; X 
-                <input name="XL" size="4" value="0">
-                <input name="XC" size="4" value="0">
-                <input name="XR" size="4" value="0">
-                Heavy Crossbowman
-            </p>
-            <p>
-                VS 
-                <input name="VSL" size="4" value="0">
-                <input name="VSC" size="4" value="0">
-                <input name="VSR" size="4" value="0">
-                Veteran Spearman
-            </p>
-            <p>
-                VB 
-                <input name="VBL" size="4" value="0">
-                <input name="VBC" size="4" value="0">
-                <input name="VBR" size="4" value="0">
-                Veteran Bowman
-            </p>
-            <p>
-                VM 
-                <input name="VML" size="4" value="0">
-                <input name="VMC" size="4" value="0">
-                <input name="VMR" size="4" value="0">
-                Veteran Maceman
-            </p>
-            <p>
-                VC 
-                <input name="VCL" size="4" value="0">
-                <input name="VCC" size="4" value="0">
-                <input name="VCR" size="4" value="0">
-                Veteran Crossbowman
-            </p>
-            <p>
-                VG
-                <input name="VGL" size="4" value="0">
-                <input name="VGC" size="4" value="0">
-                <input name="VGR" size="4" value="0">
-                Veteran Swordman
-            </p>
-            <p>
-                SM
-                <input name="SML" size="4" value="0">
-                <input name="SMC" size="4" value="0">
-                <input name="SMR" size="4" value="0">
-                Shadow Maceman
-            </p>
-            <p>
-                SC
-                <input name="SCL" size="4" value="0">
-                <input name="SCC" size="4" value="0">
-                <input name="SCR" size="4" value="0">
-                Shadow Crossbowman
-            </p>
-            <p>
-                SR
-                <input name="SRL" size="4" value="0">
-                <input name="SRC" size="4" value="0">
-                <input name="SRR" size="4" value="0">
-                Shadow Rogue
-            </p>
-            <p>
-                SF
-                <input name="SFL" size="4" value="0">
-                <input name="SFC" size="4" value="0">
-                <input name="SFR" size="4" value="0">
-                Shadow Felon
-            </p>
-            <p>
-                MA
-                <input name="MAL" size="4" value="0">
-                <input name="MAC" size="4" value="0">
-                <input name="MAR" size="4" value="0">
-                Marauder
-            </p>
-            <p>
-                PY
-                <input name="PYL" size="4" value="0">
-                <input name="PYC" size="4" value="0">
-                <input name="PYR" size="4" value="0">
-                Pyromaniac
-            </p>
-            <p>
-                TZ
-                <input name="TZL" size="4" value="0">
-                <input name="TZC" size="4" value="0">
-                <input name="TZR" size="4" value="0">
-                Travelling Knight
-            </p>
-            <p>
-                TX
-                <input name="TXL" size="4" value="0">
-                <input name="TXC" size="4" value="0">
-                <input name="TXR" size="4" value="0">
-                Travelling Crossbowman
-            </p>
-            <p>
-                KZ
-                <input name="KZL" size="4" value="0">
-                <input name="KZC" size="4" value="0">
-                <input name="KZR" size="4" value="0">
-                Knight of Kingsguard
-            </p>
-            <p>
-                KX
-                <input name="KXL" size="4" value="0">
-                <input name="KXC" size="4" value="0">
-                <input name="KXR" size="4" value="0">
-                Bowman of Kingsguard
-            </p>
-            <p>
-                KH
-                <input name="KHL" size="4" value="0">
-                <input name="KHC" size="4" value="0">
-                <input name="KHR" size="4" value="0">
-                Sentinel of Kingsguard
-            </p>
-            <p>
-                KO
-                <input name="KOL" size="4" value="0">
-                <input name="KOC" size="4" value="0">
-                <input name="KOR" size="4" value="0">
-                Scout of Kingsguard
-            </p>
-            <p>
-                NA
-                <input name="NAL" size="4" value="0">
-                <input name="NAC" size="4" value="0">
-                <input name="NAR" size="4" value="0">
-                Norseman with ax
-            </p>
-            <p>
-                NB
-                <input name="NBL" size="4" value="0">
-                <input name="NBC" size="4" value="0">
-                <input name="NBR" size="4" value="0">
-                Norseman with bow
-            </p>
-            <p>
-                WH
-                <input name="WHL" size="4" value="0">
-                <input name="WHC" size="4" value="0">
-                <input name="WHR" size="4" value="0">
-                Wolfhound
-            </p>
-            <p>
-                BR
-                <input name="BRL" size="4" value="0">
-                <input name="BRC" size="4" value="0">
-                <input name="BRR" size="4" value="0">
-                Barbarian
-            </p>
-            <p>
-                SW
-                <input name="SWL" size="4" value="0">
-                <input name="SWC" size="4" value="0">
-                <input name="SWR" size="4" value="0">
-                Saber Warrior
-            </p>
-            <p>
-                DB
-                <input name="DBL" size="4" value="0">
-                <input name="DBC" size="4" value="0">
-                <input name="DBR" size="4" value="0">
-                Desert Bowman
-            </p>
-            <p>
-                CA
-                <input name="CAL" size="4" value="0">
-                <input name="CAC" size="4" value="0">
-                <input name="CAR" size="4" value="0">
-                Composite Bowman
-            </p>
-            <p>
-                FB
-                <input name="FBL" size="4" value="0">
-                <input name="FBC" size="4" value="0">
-                <input name="FBR" size="4" value="0">
-                Flame Bearer
-            </p>
-            <p>
-                CW
-                <input name="CWL" size="4" value="0">
-                <input name="CWC" size="4" value="0">
-                <input name="CWR" size="4" value="0">
-                Cultist Warrior
-            </p>
-            <p>
-                CB
-                <input name="CBL" size="4" value="0">
-                <input name="CBC" size="4" value="0">
-                <input name="CBR" size="4" value="0">
-                Cultist Bowman
-            </p>
-            <p>
-                DZ
-                <input name="DZL" size="4" value="0">
-                <input name="DZC" size="4" value="0">
-                <input name="DZR" size="4" value="0">
-                Demon Horror
-            </p>
-            <p>
-                DX
-                <input name="DXL" size="4" value="0">
-                <input name="DXC" size="4" value="0">
-                <input name="DXR" size="4" value="0">
-                Deathly Horror
-            </p>
-            <p>
-                LB
-                <input name="LBL" size="4" value="0">
-                <input name="LBC" size="4" value="0">
-                <input name="LBR" size="4" value="0">
-                Lion Bowman
-            </p>
-            <p>
-                LW
-                <input name="LWL" size="4" value="0">
-                <input name="LWC" size="4" value="0">
-                <input name="LWR" size="4" value="0">
-                Lion Warrior
-            </p>
-            <p>
-                BB
-                <input name="BBL" size="4" value="0">
-                <input name="BBC" size="4" value="0">
-                <input name="BBR" size="4" value="0">
-                Bear Bowman
-            </p>
-            <p>
-                BW
-                <input name="BWL" size="4" value="0">
-                <input name="BWC" size="4" value="0">
-                <input name="BWR" size="4" value="0">
-                Bear Warrior
-            </p>
+            <div id="unitsAttacking">
+            		<!--// -- This is for some collapsable stuff that I haven't figured out how to
+            		// do within a form yet//
+                        //<!--<button id="Level1" title="+" onclick="javascript:displayLvl1()"></button>
+                        //<p>
+                        //<button id="Level1Show" title="Level 1 Troops" onclick="javascript:displaylvl1('block')">Show</button>
+                        //<button id="Level1Hide" title="Level 1 Troops" onclick="javascript:displaylvl1('none')">Hide</button>
+                        //<!--<a href="javascript:displaylvl1('block')">Show</a>
+                        //<a href="javascript:displaylvl1('none')">Hide</a>
+                        //<hr />
+                        //</p>
+                        //<div id="lvl1" style="display:none">-->
+                            <p>
+                                <!--&nbsp; S-->
+                                Spearmen <br />
+                                <input name="SL" size="4" value="0">
+                                <input name="SC" size="4" value="0">
+                                <input name="SR" size="4" value="0">
+                            </p>
+                            <p>
+                                <!--&nbsp; M-->
+                                Macemen <br />
+                                <input name="ML" size="4" value="0">
+                                <input name="MC" size="4" value="0">
+                                <input name="MR" size="4" value="0">
+                            </p>
+                        <!--</div>-->
+                        <p>
+                            <!--&nbsp; B-->
+                            Bowmen <br />
+                            <input name="BL" size="4" value="0">
+                            <input name="BC" size="4" value="0">
+                            <input name="BR" size="4" value="0">
+                        </p>
+                        <p>
+                            <!--&nbsp; C-->
+                            Crossbowmen <br />
+                            <input name="CL" size="4" value="0">
+                            <input name="CC" size="4" value="0">
+                            <input name="CR" size="4" value="0">
+                        </p>
+                        <p>
+                            <!--&nbsp; G-->
+                            Swordsmen <br />
+                            <input name="GL" size="4" value="0">
+                            <input name="GC" size="4" value="0">
+                            <input name="GR" size="4" value="0">
+                        </p>
+                        <p>
+                            <!--&nbsp; A-->
+                            Archers <br />
+                            <input name="AL" size="4" value="0">
+                            <input name="AC" size="4" value="0">
+                            <input name="AR" size="4" value="0">
+                        </p>
+                        <p>
+                            <!--&nbsp; Z-->
+                            Twohanded Swordmen <br />
+                            <input name="ZL" size="4" value="0">
+                            <input name="ZC" size="4" value="0">
+                            <input name="ZR" size="4" value="0">
+                        </p>
+                        <p>
+                            <!--&nbsp; H-->
+                            Halberdiers <br />
+                            <input name="HL" size="4" value="0">
+                            <input name="HC" size="4" value="0">
+                            <input name="HR" size="4" value="0">
+                        </p>
+                        <p>
+                            <!--&nbsp; X-->
+                            Heavy Crossbowmen <br />
+                            <input name="XL" size="4" value="0">
+                            <input name="XC" size="4" value="0">
+                            <input name="XR" size="4" value="0">
+                        </p>
+                        <p>
+                            <!--&nbsp; O-->
+                            Longbowmen <br />
+                            <input name="OL" size="4" value="0">
+                            <input name="OC" size="4" value="0">
+                            <input name="OR" size="4" value="0">
+                        </p>
+                        <p>
+                            <!--VS-->
+                            Veteran Spearmen <br />
+                            <input name="VSL" size="4" value="0">
+                            <input name="VSC" size="4" value="0">
+                            <input name="VSR" size="4" value="0">
+                        </p>
+                        <p>
+                            <!--VB-->
+                            Veteran Bowmen <br />
+                            <input name="VBL" size="4" value="0">
+                            <input name="VBC" size="4" value="0">
+                            <input name="VBR" size="4" value="0">
+                        </p>
+                        <p>
+                            <!--VM-->
+                            Veteran Macemen <br />
+                            <input name="VML" size="4" value="0">
+                            <input name="VMC" size="4" value="0">
+                            <input name="VMR" size="4" value="0">
+                        </p>
+                        <p>
+                           <!-- VC-->
+                            Veteran Crossbowmen <br />
+                            <input name="VCL" size="4" value="0">
+                            <input name="VCC" size="4" value="0">
+                            <input name="VCR" size="4" value="0">
+                        </p>
+                        <p>
+                            <!--VG-->
+                            Veteran Swordmen <br />
+                            <input name="VGL" size="4" value="0">
+                            <input name="VGC" size="4" value="0">
+                            <input name="VGR" size="4" value="0">
+                        </p>
+                        <p>
+                            <!--SM-->
+                            Shadow Macemen <br />
+                            <input name="SML" size="4" value="0">
+                            <input name="SMC" size="4" value="0">
+                            <input name="SMR" size="4" value="0">
+                        </p>
+                        <p>
+                            <!--SC-->
+                            Shadow Crossbowmen <br />
+                            <input name="SCL" size="4" value="0">
+                            <input name="SCC" size="4" value="0">
+                            <input name="SCR" size="4" value="0">
+                        </p>
+                        <p>
+                            <!--SR-->
+                            Shadow Rogues <br />
+                            <input name="SRL" size="4" value="0">
+                            <input name="SRC" size="4" value="0">
+                            <input name="SRR" size="4" value="0">
+                        </p>
+                        <p>
+                            <!--SF-->
+                            Shadow Felons <br />
+                            <input name="SFL" size="4" value="0">
+                            <input name="SFC" size="4" value="0">
+                            <input name="SFR" size="4" value="0">
+                        </p>
+                        <p>
+                            <!--MA-->
+                            Marauders <br />
+                            <input name="MAL" size="4" value="0">
+                            <input name="MAC" size="4" value="0">
+                            <input name="MAR" size="4" value="0">
+                        </p>
+                        <p>
+                            <!--PY-->
+                            Pyromeniacs <br />
+                            <input name="PYL" size="4" value="0">
+                            <input name="PYC" size="4" value="0">
+                            <input name="PYR" size="4" value="0">
+                        </p>
+                        <p>
+                            <!--TZ-->
+                            Travelling Knights <br />
+                            <input name="TZL" size="4" value="0">
+                            <input name="TZC" size="4" value="0">
+                            <input name="TZR" size="4" value="0">
+                        </p>
+                        <p>
+                            <!--TX-->
+                            Travelling Crossbowmen <br />
+                            <input name="TXL" size="4" value="0">
+                            <input name="TXC" size="4" value="0">
+                            <input name="TXR" size="4" value="0">
+                        </p>
+                        <p>
+                            <!--KZ-->
+                            Knights of Kingsguard <br />
+                            <input name="KZL" size="4" value="0">
+                            <input name="KZC" size="4" value="0">
+                            <input name="KZR" size="4" value="0">
+                        </p>
+                        <p>
+                            <!--KX-->
+                            Bowmen of Kingsguard <br />
+                            <input name="KXL" size="4" value="0">
+                            <input name="KXC" size="4" value="0">
+                            <input name="KXR" size="4" value="0">
+                        </p>
+                        <p>
+                            <!--KH-->
+                            Sentinels of Kingsguard <br />
+                            <input name="KHL" size="4" value="0">
+                            <input name="KHC" size="4" value="0">
+                            <input name="KHR" size="4" value="0">
+                        </p>
+                        <p>
+                            <!--KO-->
+                            Scouts of Kingsguard <br />
+                            <input name="KOL" size="4" value="0">
+                            <input name="KOC" size="4" value="0">
+                            <input name="KOR" size="4" value="0">
+                        </p>
+                        <p>
+                            <!--NA-->
+                            Norsemen with ax <br />
+                            <input name="NAL" size="4" value="0">
+                            <input name="NAC" size="4" value="0">
+                            <input name="NAR" size="4" value="0">
+                        </p>
+                        <p>
+                            <!--NB-->
+                            Norsemen with bow <br />
+                            <input name="NBL" size="4" value="0">
+                            <input name="NBC" size="4" value="0">
+                            <input name="NBR" size="4" value="0">
+                        </p>
+                        <p>
+                            <!--WH-->
+                            Wolfhounds <br />
+                            <input name="WHL" size="4" value="0">
+                            <input name="WHC" size="4" value="0">
+                            <input name="WHR" size="4" value="0">
+                        </p>
+                        <p>
+                            <!--BR-->
+                            Barbarians <br />
+                            <input name="BRL" size="4" value="0">
+                            <input name="BRC" size="4" value="0">
+                            <input name="BRR" size="4" value="0">
+                        </p>
+                        <p>
+                            <!--SW-->
+                            Saber Warriors <br />
+                            <input name="SWL" size="4" value="0">
+                            <input name="SWC" size="4" value="0">
+                            <input name="SWR" size="4" value="0">
+                        </p>
+                        <p>
+                            <!--DB-->
+                            Desert Bowmen <br />
+                            <input name="DBL" size="4" value="0">
+                            <input name="DBC" size="4" value="0">
+                            <input name="DBR" size="4" value="0">
+                        </p>
+                        <p>
+                            <!--CA-->
+                            Composite Bowmen <br />
+                            <input name="CAL" size="4" value="0">
+                            <input name="CAC" size="4" value="0">
+                            <input name="CAR" size="4" value="0">
+                        </p>
+                        <p>
+                            <!--FB-->
+                            Flame Bearers <br />
+                            <input name="FBL" size="4" value="0">
+                            <input name="FBC" size="4" value="0">
+                            <input name="FBR" size="4" value="0">
+                        </p>
+                        <p>
+                            <!--CW-->
+                            Cultist Warriors <br />
+                            <input name="CWL" size="4" value="0">
+                            <input name="CWC" size="4" value="0">
+                            <input name="CWR" size="4" value="0">
+                        </p>
+                        <p>
+                            <!--CB-->
+                            Cultist Bowmen <br />
+                            <input name="CBL" size="4" value="0">
+                            <input name="CBC" size="4" value="0">
+                            <input name="CBR" size="4" value="0">
+                        </p>
+                        <p>
+                            <!--DZ-->
+                            Demon Horrors <br />
+                            <input name="DZL" size="4" value="0">
+                            <input name="DZC" size="4" value="0">
+                            <input name="DZR" size="4" value="0">
+                        </p>
+                        <p>
+                            <!--DX-->
+                            Deathly Horrors <br />
+                            <input name="DXL" size="4" value="0">
+                            <input name="DXC" size="4" value="0">
+                            <input name="DXR" size="4" value="0">
+                        </p>
+                        <p>
+                            <!--LB-->
+                            Lion Bowmen <br />
+                            <input name="LBL" size="4" value="0">
+                            <input name="LBC" size="4" value="0">
+                            <input name="LBR" size="4" value="0">
+                        </p>
+                        <p>
+                            <!--LW-->
+                            Lion Warriors <br />
+                            <input name="LWL" size="4" value="0">
+                            <input name="LWC" size="4" value="0">
+                            <input name="LWR" size="4" value="0">
+                        </p>
+                        <p>
+                            <!--BB-->
+                            Bear Bowmen <br />
+                            <input name="BBL" size="4" value="0">
+                            <input name="BBC" size="4" value="0">
+                            <input name="BBR" size="4" value="0">
+                        </p>
+                        <p>
+                            <!--BW-->
+                            Bear Warriors <br />
+                            <input name="BWL" size="4" value="0">
+                            <input name="BWC" size="4" value="0">
+                            <input name="BWR" size="4" value="0">
+                        </p>
+                    </div>
             <p>
                 <input type="BUTTON" onclick="Combat_calc(this.form);" value="Calculate" class="btn btn-default btn-lg">
             </p>
@@ -697,8 +717,20 @@
     <section id="tips" class="container content-section text-center">
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2">
-                <h2>Gold Farming</h2>
-                    <p>Explain gold farming technique.</p>
+                <h1 style="color:gold">Gold farming!</h1>
+                <p>This is broken as all fucking shit right now, and nevik34 is currently in a long and drawn-out bitching standoff with the BlueStacks devs looking for a fix. He's working on a Genymotion custom build for an alternative emulator in the mean time...so sit tight...because a baller cash bankroll without having to poke your screen incessantly for hours is pretty fucking tits, batman.</p>
+                <p>....but when it finally starts working...</p>
+                <h2 style="color:gray">Gold Farming</h2>
+                <p>Follow these instructions to generate some baller cash while you're sleeping. This applies to your computer. The goal here is to emulate Empire, and setup a macro that automatically collects from the tax collector every 10 minutes.</p>
+                <p>Setup BlueStacks (installer below), and install Empire through the Play store. Make sure you sign in with your account. Launch Empire, and complete the brief tutorial. Once you hit level 5, go to Settings within the game, and tap "Change User Account". Here's where you type in your credentials. If you haven't saved yours yet, make sure you do. GG does not allow you to port your account to another device until you do so.</p>
+                <p>Logged in? See your shit? Great! Open up Mouse Controller (installer below)</p>
+                <p>Within Empire, open up the tax collector screen, and collect if you have not already done so. This is where the screen needs to stay for this method to work. Press "F9" on your keyboard to start recording on MouseController, and click to 10 minute coin gathering option</p>
+                <p>Wait 10 minutes. Don't move you mouse. Seriously don't fucking touch it. Just wait with the anticipation that you can be lazy as hell from now on. When the timer runs out, click "Collect", then the Ok button (or green check button), and press F9 again.</p>
+                <p>That wasn't so hard, was it?</p>
+                <p>Now that you've got it recorded, click "File -> Save", and save the recording somewhere.</p>
+                <p>Ensure that the "Repeat every" textbox says "0". Click "Start Playback, and make sure that your recording runs correctly.</p>
+                <p>???</p>
+                <p>Profit</p>
                     Download <a href="http://www.bluestacks.com/">BlueStacks</a> and <a href="http://sourceforge.net/projects/mousecontroller/files/latest/download">MouseController</a>
             </div>
         </div>
@@ -708,17 +740,35 @@
         <div class="download-section">
             <div class="container">
                 <div class="col-lg-8 col-lg-offset-2">
-				<h2>Contact Four Horsemen</h2>
-                <p>Feel free to email us to provide some feedback on the tools, give us suggestions for new ones to host or build, join the alliance, or to just say hello!</p>
-                <p>feedback@somedomain.com</p>
-                <ul class="list-inline banner-social-buttons">
-                    <li><a href="https://twitter.com/NotAPoliceman" class="btn btn-default btn-lg"><i class="fa fa-twitter fa-fw"></i> <span class="network-name">Twitter</span></a>
-                    </li>
-                    <li><a href="https://github.com/aallen90" class="btn btn-default btn-lg"><i class="fa fa-github fa-fw"></i> <span class="network-name">Github</span></a>
-                    </li>
-                    <li><a href="https://plus.google.com/u/0/105500523616378793964/posts" class="btn btn-default btn-lg"><i class="fa fa-google-plus fa-fw"></i> <span class="network-name">Google+</span></a>
-                    </li>
-                </ul>
+                <h2>Contact your shoddy devs</h2>
+                    <p>We're basically mental-ward patients in the making, so this might all be complete bullshit. Feel free to email us to provide some feedback on the tools, tell us we're full of shit, give us suggestions for new ones to host or build, join the alliance, or to just say hello!</p>
+                        
+                    <a href="mailto:rockstar.aaustin@gmail.com">Dev Austin</a> (Dubblea13)
+                    <ul class="list-inline banner-social-buttons">
+                        <li>
+                            <a href="https://twitter.com/NotAPoliceman" class="btn btn-default btn-lg"><i class="fa fa-twitter fa-fw"></i> <span class="network-name">Twitter</span></a>
+                        </li>
+                        <li>
+                            <a href="https://github.com/aallen90" class="btn btn-default btn-lg"><i class="fa fa-github fa-fw"></i> <span class="network-name">Github</span></a>
+                        </li>
+                        <li>
+                            <a href="https://plus.google.com/u/0/105500523616378793964/posts" class="btn btn-default btn-lg"><i class="fa fa-google-plus fa-fw"></i> <span class="network-name">Google+</span></a>
+                        </li>
+                    </ul>
+                    <br />
+                   
+                    <a href="mailto:rockstar.kkelley@gmail.com">Dev Kevin</a> (Nevik34)                    
+                    <ul class="list-inline banner-social-buttons">
+                        <li>
+                            <a href="https://twitter.com/Kevin_Kelley1" class="btn btn-default btn-lg"><i class="fa fa-twitter fa-fw"></i> <span class="network-name">Twitter</span></a>
+                        </li>
+                        <li>
+                            <a href="https://github.com/Nevik34" class="btn btn-default btn-lg"><i class="fa fa-github fa-fw"></i> <span class="network-name">Github</span></a>
+                        </li>
+                        <li>
+                            <a href="https://plus.google.com/101414892071519454264/posts" class="btn btn-default btn-lg"><i class="fa fa-google-plus fa-fw"></i> <span class="network-name">Google+</span></a>
+                        </li>
+                    </ul>
                     
                 </div>
             </div>
